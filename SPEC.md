@@ -105,4 +105,14 @@ ceux d'aujourd'hui : rien ne change dans les droits.
 2. Plateforme : adresse `/mcp` unique, jeton lié à la personne, tests.
 3. Plugin : skill `/correspondant`, fichier de config, garde-fou, tests.
 4. Scénario de bout en bout sur un projet d'essai (cobalt), boucle locale allumée en local seulement.
+   **Joué le 2026-10-19 en local** : écran de consentement « Correspondant Oovrage pour tous tes projets »
+   (cobalt, hôte de retour `127.0.0.1:33418`) ; ancien écran `/mcp/cobalt` inchangé ; flux OAuth en boucle
+   locale jusqu'au jeton (`api_tokens` kind `mcp`, `project_slug` NULL) ; `accueil` sur `/mcp` avec
+   `X-Oovrage-Projet: cobalt` (journal `correspondant_journal` : `accueil`, `ok`) ; sans en-tête → 400,
+   autre projet → 403 ; le skill crée seul `.oovrage-client.json` ; dans ce dossier, `Write notes.md` et
+   `ls` sont refusés par le garde-fou ; ailleurs, l'écriture passe. Claude Code atteint `/mcp` avec l'en-tête
+   et l'adresse tirée de `OOVRAGE_PLATEFORME`. Défauts trouvés et corrigés : `/mcp` renvoyé vers `/sign-in`
+   par le proxy de la plateforme ; entrée de marketplace dans `oovrage` refusée par son test d'anonymat
+   (marketplace propre à ce dépôt). Non joué : la connexion `/mcp` dans une session interactive
+   (`docs/suivi/DETTE.md`).
 5. Go du propriétaire pour la production.
