@@ -73,10 +73,12 @@ ceux d'aujourd'hui : rien ne change dans les droits.
 
 ## Compatibilité avec le plugin `oovrage`
 
-- Deuxième plugin de la marketplace du dépôt `oovrage` (`.claude-plugin/marketplace.json`), sans
-  dépendance au plugin `oovrage` ; son code vit dans ce dépôt (`oovrage-client`). Pour la marketplace : soit
-  une source qui pointe vers ce dépôt git, soit une marketplace propre à ce dépôt. Tranché : une entrée dans la marketplace de `oovrage` dont la
-  source est le dépôt git `gkfa-solutions/oovrage-client`.
+- Plugin à part, sans dépendance au plugin `oovrage` ; son code vit dans ce dépôt (`oovrage-client`). Pour la marketplace : soit
+  une source qui pointe vers ce dépôt git, soit une marketplace propre à ce dépôt. Tranché : **une marketplace propre à ce dépôt**
+  (`.claude-plugin/marketplace.json`, source `./`) ; installation par
+  `/plugin marketplace add gkfa-solutions/oovrage-client` puis `/plugin install oovrage-client@oovrage-client`.
+  Une entrée dans la marketplace de `oovrage` écrirait le compte GitHub de la société dans ce dépôt-là, ce
+  que son test d'anonymat refuse.
 - Préfixes séparés : les commandes sont `/oovrage-client:…`, aucune collision avec `/oovrage:…`.
 - Le garde-fou ne s'active que là où il y a `.oovrage-client.json` (voir plus haut).
 - Rien de nouveau dans le plugin `oovrage` : le pilote continue de gérer les instances par

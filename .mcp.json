@@ -3,7 +3,7 @@
     "correspondant": {
       "type": "http",
       "url": "${OOVRAGE_PLATEFORME:-https://oovrage-platform.vercel.app}/mcp",
-      "headersHelper": "${CLAUDE_PLUGIN_ROOT}/bin/entete-projet \"${CLAUDE_PROJECT_DIR}\""
+      "headersHelper": "\"${CLAUDE_PLUGIN_ROOT}/bin/entete-projet\" \"${CLAUDE_PROJECT_DIR}\""
     }
   }
 }
