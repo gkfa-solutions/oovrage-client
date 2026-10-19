@@ -1,0 +1,92 @@
+# SPEC — plugin oovrage-client
+
+**Date** : 2026-10-19 — **Statut** : à cadrer (brouillon issu d'une discussion, rien n'est codé)
+
+## Le besoin
+
+Aujourd'hui, le client parle au Correspondant en ajoutant un connecteur personnalisé dans claude.ai, avec
+une adresse par projet (`https://<plateforme>/mcp/<slug>`). Quand un client a plusieurs projets, il a
+plusieurs connecteurs aux outils identiques (mêmes noms, descriptions qui ne nomment pas le projet) :
+Claude peut se tromper de projet ou n'en appeler aucun, et le client ne sait pas quoi dire pour déclencher
+un geste (dépôt d'un ticket, revue, vote…).
+
+Idée retenue : un plugin Claude Code à part, **oovrage-client**, que le client installe une fois. Il
+travaille dans un dossier par projet ; un fichier de config dans ce dossier dit de quel projet il s'agit.
+
+## Ce que fait le plugin
+
+- Un skill `/correspondant` (nom exact à confirmer) que le client lance dans le dossier de son choix.
+  - Dossier **sans** fichier de config : le skill demande le projet (adresse de la plateforme + projet),
+    puis écrit le fichier de config. C'est le **seul fichier** que le plugin a le droit de créer.
+  - Dossier **avec** fichier de config : le skill lit le projet, appelle `accueil`, et la conversation
+    démarre sur ce projet.
+- Le plugin embarque son connecteur MCP (déclaré dans le plugin, pas à ajouter à la main).
+- Interdiction de créer, modifier ou supprimer tout autre fichier : un garde-fou (hook `PreToolUse` sur
+  Write / Edit / NotebookEdit et sur les commandes shell qui écrivent) bloque tout le reste.
+  - **Le garde-fou n'agit que dans un dossier qui contient le fichier de config.** Ailleurs, il ne fait
+    rien : le propriétaire a aussi le plugin `oovrage` (pilote) et ne doit jamais être bloqué dans son
+    travail de pilote.
+
+## Le fichier de config
+
+Nom proposé : `.oovrage-client.json` (jamais `_projet/`, `_suivi.yaml`, `.claude/` ni rien que le plugin
+`oovrage` reconnaît comme un projet piloté). Contenu proposé :
+
+```json
+{ "plateforme": "https://plateforme.example", "projet": "atlas" }
+```
+
+Aucun jeton dedans : la connexion est gardée par Claude Code dans son propre stockage, hors du dossier.
+
+## Changements côté plateforme (dépôt `oovrage`, `apps/platform`)
+
+1. **Adresse unique** `/mcp` (en plus de `/mcp/<slug>`, qui reste pour claude.ai). Le projet n'est plus dans
+   l'adresse : il arrive avec chaque requête.
+   - Piste A : un en-tête (ex. `X-Oovrage-Projet`) que Claude Code construit depuis le fichier de config.
+     **À vérifier en premier** : Claude Code sait-il ajouter à un serveur MCP de plugin un en-tête calculé
+     à partir du dossier courant (variable d'environnement, `headersHelper` ou équivalent) ?
+   - Piste B, de repli : chaque outil prend un argument `projet` ; le skill le lit dans le fichier de config
+     et consigne à Claude de le passer à chaque appel.
+2. **Jeton lié à la personne**, plus au projet : aujourd'hui `resolveMcpToken(token, slug)`
+   (`src/lib/correspondant/auth.ts`) refuse un jeton d'un autre projet. Avec l'adresse unique, le jeton
+   porte l'email ; à chaque requête la plateforme vérifie que la personne est membre du projet demandé, puis
+   résout l'instance comme aujourd'hui. Les métadonnées OAuth (`resource`, `scope`) suivent l'adresse unique.
+3. **Connexion depuis Claude Code** : le code accepte déjà la boucle locale (`OAUTH_ALLOW_LOOPBACK=1`,
+   `src/lib/oauth/config.ts`), coupée en production. L'allumer en production est un geste de production :
+   montrer la commande exacte et attendre le go du propriétaire.
+
+La porte du corpus, les portées (dont `code`), les gestes, le journal et l'accord avant écriture restent
+ceux d'aujourd'hui : rien ne change dans les droits.
+
+## Compatibilité avec le plugin `oovrage`
+
+- Deuxième plugin de la marketplace du dépôt `oovrage` (`.claude-plugin/marketplace.json`), sans
+  dépendance au plugin `oovrage` ; son code vit dans ce dépôt (`oovrage-client`). Pour la marketplace : soit
+  une source qui pointe vers ce dépôt git, soit une marketplace propre à ce dépôt — à trancher.
+- Préfixes séparés : les commandes sont `/oovrage-client:…`, aucune collision avec `/oovrage:…`.
+- Le garde-fou ne s'active que là où il y a `.oovrage-client.json` (voir plus haut).
+- Rien de nouveau dans le plugin `oovrage` : le pilote continue de gérer les instances par
+  `oovrage correspondant`.
+
+## Limites connues
+
+- Le client doit avoir Claude Code, ou l'application de bureau en mode Cowork (à vérifier : plugins et
+  connecteur distant y fonctionnent-ils ?). Il perd l'usage depuis claude.ai web et mobile ; le connecteur
+  claude.ai reste disponible pour ceux qui le préfèrent.
+- Le code lu reste l'instantané publié à la mise en prod (`oovrage code publier`), pas le dépôt.
+
+## Règles du dépôt
+
+- **Aucun nom réel** de client, de projet ou de personne : exemples sur des noms fictifs (atlas, bistro,
+  cobalt, ember, fjord…).
+- Pas d'estimation de temps ; arbitrer par valeur, complexité et sûreté.
+- Vérifier par des tests automatisés, et par un scénario sur un projet d'essai jetable.
+
+## Ordre proposé
+
+1. Essai : un plugin minimal qui déclare un serveur MCP HTTP et tente la piste A (en-tête depuis le dossier).
+   Le résultat tranche entre A et B.
+2. Plateforme : adresse `/mcp` unique, jeton lié à la personne, tests.
+3. Plugin : skill `/correspondant`, fichier de config, garde-fou, tests.
+4. Scénario de bout en bout sur un projet d'essai (cobalt), boucle locale allumée en local seulement.
+5. Go du propriétaire pour la production.
