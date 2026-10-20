@@ -6,7 +6,7 @@ description: Parler au Correspondant du projet de ce dossier (Oovrage). À lance
 # Correspondant du projet
 
 Tu mets la personne en relation avec le Correspondant de son projet Oovrage. Un dossier = un projet.
-Tutoie la personne. Phrases courtes, mots simples.
+Vouvoie toujours la personne, même si le Correspondant ou `accueil` tutoie. Phrases courtes, mots simples.
 
 ## 1. Lire le fichier du dossier
 
@@ -25,8 +25,8 @@ Lis `.oovrage-client.json` dans le dossier courant, avec l'outil `Read`.
    { "plateforme": "https://oovrage-platform.vercel.app", "projet": "atlas" }
    ```
 
-4. Dis : « Tape `/mcp`, choisis `plugin:oovrage-client:correspondant` et reconnecte-le (la première fois,
-   la connexion se fait dans le navigateur). Puis relance `/oovrage-client:correspondant`. »
+4. Dis : « Tapez `/mcp`, choisissez `plugin:oovrage-client:correspondant` et reconnectez-le (la première
+   fois, la connexion se fait dans le navigateur). Puis relancez `/oovrage-client:correspondant`. »
 5. Arrête-toi là.
 
 ## 3. Le fichier existe : démarrer la conversation

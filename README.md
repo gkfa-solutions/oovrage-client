@@ -13,16 +13,16 @@ Dans Claude Code :
 
 ## Utilisation
 
-1. Crée un dossier par projet (par exemple `atlas`), et lance Claude Code dedans.
-2. Tape `/oovrage-client:correspondant`. La première fois, Claude te demande le nom court du projet
+1. Créez un dossier par projet (par exemple `atlas`), et lancez Claude Code dedans.
+2. Tapez `/oovrage-client:correspondant`. La première fois, Claude vous demande le nom court du projet
    (donné par le pilote) et crée le fichier `.oovrage-client.json`.
-3. Tape `/mcp`, choisis `plugin:oovrage-client:correspondant` et connecte-le : la connexion se fait dans
-   le navigateur, avec ton adresse e-mail (lien de connexion).
-4. Relance `/oovrage-client:correspondant` : la conversation démarre sur ton projet.
+3. Tapez `/mcp`, choisissez `plugin:oovrage-client:correspondant` et connectez-le : la connexion se fait
+   dans le navigateur, avec votre adresse e-mail (lien de connexion).
+4. Relancez `/oovrage-client:correspondant` : la conversation démarre sur votre projet.
 
-La connexion vaut pour tous tes projets : dans un autre dossier, seul le nom du projet change.
+La connexion vaut pour tous vos projets : dans un autre dossier, seul le nom du projet change.
 
-Plateforme autre que `https://oovrage-platform.vercel.app` : définis la variable `OOVRAGE_PLATEFORME`
+Plateforme autre que `https://oovrage-platform.vercel.app` : définissez la variable `OOVRAGE_PLATEFORME`
 avec son adresse avant de lancer Claude Code.
 
 ## Ce que le plugin n'écrit jamais
