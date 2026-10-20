@@ -1,0 +1,20 @@
+{
+  "name": "oovrage-client",
+  "owner": {
+    "name": "Oovrage"
+  },
+  "metadata": {
+    "description": "Oovrage — le plugin des clients, pour parler au Correspondant de leurs projets."
+  },
+  "plugins": [
+    {
+      "name": "oovrage-client",
+      "source": "./",
+      "description": "Parler au Correspondant d'un projet Oovrage.",
+      "author": {
+        "name": "Oovrage"
+      },
+      "category": "productivity"
+    }
+  ]
+}

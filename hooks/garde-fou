@@ -1,0 +1,43 @@
+#!/bin/bash
+# Garde-fou du plugin client (hook PreToolUse sur Write, Edit, MultiEdit,
+# NotebookEdit et Bash).
+#
+# N'agit QUE dans un dossier client, c'est-à-dire un dossier qui contient
+# `.oovrage-client.json` ($CLAUDE_PROJECT_DIR, sinon le `cwd` du hook) :
+# ailleurs (session du pilote, autre projet), il sort en 0 sans rien dire.
+# Dans un dossier client, seul ce fichier, par son chemin absolu exact, peut
+# être écrit (Write, Edit, MultiEdit) ; tout le reste est bloqué (code 2),
+# y compris tout le shell (reconnaître sûrement une commande qui écrit est
+# impossible, et le client n'en a pas besoin) et un appel illisible.
+# Bash pur : ni jq, ni node, ni python chez le client.
+
+MESSAGE="Dossier client Oovrage : seul .oovrage-client.json peut être écrit ici. Le Correspondant agit par ses outils, pas par des fichiers."
+
+entree="$(tr -d '\n\r')"
+
+# champ <nom> : valeur d'un champ chaîne, seulement s'il apparaît exactement une
+# fois et sans échappement ; vide sinon.
+champ() {
+  local v
+  v="$(printf '%s' "$entree" | grep -o "\"$1\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" | sed 's/.*:[[:space:]]*"\([^"]*\)"$/\1/')"
+  [ "$(printf '%s\n' "$v" | grep -c .)" -eq 1 ] || return 0
+  case "$v" in *\\*) return 0 ;; esac
+  printf '%s' "$v"
+}
+
+dossier="${CLAUDE_PROJECT_DIR:-}"
+[ -n "$dossier" ] || dossier="$(champ cwd)"
+[ -n "$dossier" ] && [ -f "$dossier/.oovrage-client.json" ] || exit 0
+
+bloque() {
+  printf '%s\n' "$MESSAGE" >&2
+  exit 2
+}
+
+case "$(champ tool_name)" in
+  Write | Edit | MultiEdit)
+    [ "$(champ file_path)" = "$dossier/.oovrage-client.json" ] && exit 0
+    bloque
+    ;;
+  *) bloque ;;
+esac
