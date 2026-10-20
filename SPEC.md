@@ -1,6 +1,6 @@
 # SPEC — plugin oovrage-client
 
-**Date** : 2026-10-19 — **Statut** : à cadrer (brouillon issu d'une discussion, rien n'est codé)
+**Date** : 2026-10-19 — **Statut** : cadrée (piste A vérifiée le 2026-10-19)
 
 ## Le besoin
 
@@ -15,7 +15,7 @@ travaille dans un dossier par projet ; un fichier de config dans ce dossier dit 
 
 ## Ce que fait le plugin
 
-- Un skill `/correspondant` (nom exact à confirmer) que le client lance dans le dossier de son choix.
+- Un skill `/oovrage-client:correspondant` que le client lance dans le dossier de son choix.
   - Dossier **sans** fichier de config : le skill demande le projet (adresse de la plateforme + projet),
     puis écrit le fichier de config. C'est le **seul fichier** que le plugin a le droit de créer.
   - Dossier **avec** fichier de config : le skill lit le projet, appelle `accueil`, et la conversation
@@ -47,6 +47,19 @@ Aucun jeton dedans : la connexion est gardée par Claude Code dans son propre st
      à partir du dossier courant (variable d'environnement, `headersHelper` ou équivalent) ?
    - Piste B, de repli : chaque outil prend un argument `projet` ; le skill le lit dans le fichier de config
      et consigne à Claude de le passer à chaque appel.
+   - **Résultat de l'essai (2026-10-19, Claude Code 2.1.303) : piste A retenue.** Syntaxe qui marche dans
+     le `.mcp.json` du plugin :
+     `"headersHelper": "${CLAUDE_PLUGIN_ROOT}/bin/entete-projet \"${CLAUDE_PROJECT_DIR}\""`.
+     `${CLAUDE_PROJECT_DIR}` est remplacé par Claude Code dans la config (le helper reçoit le chemin du
+     dossier de la session en `$1`) ; la variable n'est pas dans l'environnement du helper, et le helper
+     tourne dans le dossier du plugin (son `pwd` ne sert donc pas). L'en-tête part sur chaque requête,
+     y compris celles de découverte OAuth (`/.well-known/…`, `/register`) : sans effet.
+   - Décisions prises par le plan : nom du skill `correspondant` ; adresse du connecteur
+     `${OOVRAGE_PLATEFORME:-https://oovrage-platform.vercel.app}/mcp` ; sans en-tête, `/mcp` répond
+     `400 projet_absent` ; projet inconnu ou dont la personne n'est pas membre : `403 projet_refuse`
+     (même message) ; portée OAuth `correspondant`, ressource `<origine>/mcp` ; dans un dossier client,
+     **toute** commande shell est bloquée (reconnaître sûrement une commande qui écrit est impossible, et
+     le client n'en a pas besoin).
 2. **Jeton lié à la personne**, plus au projet : aujourd'hui `resolveMcpToken(token, slug)`
    (`src/lib/correspondant/auth.ts`) refuse un jeton d'un autre projet. Avec l'adresse unique, le jeton
    porte l'email ; à chaque requête la plateforme vérifie que la personne est membre du projet demandé, puis
@@ -60,9 +73,12 @@ ceux d'aujourd'hui : rien ne change dans les droits.
 
 ## Compatibilité avec le plugin `oovrage`
 
-- Deuxième plugin de la marketplace du dépôt `oovrage` (`.claude-plugin/marketplace.json`), sans
-  dépendance au plugin `oovrage` ; son code vit dans ce dépôt (`oovrage-client`). Pour la marketplace : soit
-  une source qui pointe vers ce dépôt git, soit une marketplace propre à ce dépôt — à trancher.
+- Plugin à part, sans dépendance au plugin `oovrage` ; son code vit dans ce dépôt (`oovrage-client`). Pour la marketplace : soit
+  une source qui pointe vers ce dépôt git, soit une marketplace propre à ce dépôt. Tranché : **une marketplace propre à ce dépôt**
+  (`.claude-plugin/marketplace.json`, source `./`) ; installation par
+  `/plugin marketplace add gkfa-solutions/oovrage-client` puis `/plugin install oovrage-client@oovrage-client`.
+  Une entrée dans la marketplace de `oovrage` écrirait le compte GitHub de la société dans ce dépôt-là, ce
+  que son test d'anonymat refuse.
 - Préfixes séparés : les commandes sont `/oovrage-client:…`, aucune collision avec `/oovrage:…`.
 - Le garde-fou ne s'active que là où il y a `.oovrage-client.json` (voir plus haut).
 - Rien de nouveau dans le plugin `oovrage` : le pilote continue de gérer les instances par
@@ -89,4 +105,14 @@ ceux d'aujourd'hui : rien ne change dans les droits.
 2. Plateforme : adresse `/mcp` unique, jeton lié à la personne, tests.
 3. Plugin : skill `/correspondant`, fichier de config, garde-fou, tests.
 4. Scénario de bout en bout sur un projet d'essai (cobalt), boucle locale allumée en local seulement.
+   **Joué le 2026-10-19 en local** : écran de consentement « Correspondant Oovrage pour tous tes projets »
+   (cobalt, hôte de retour `127.0.0.1:33418`) ; ancien écran `/mcp/cobalt` inchangé ; flux OAuth en boucle
+   locale jusqu'au jeton (`api_tokens` kind `mcp`, `project_slug` NULL) ; `accueil` sur `/mcp` avec
+   `X-Oovrage-Projet: cobalt` (journal `correspondant_journal` : `accueil`, `ok`) ; sans en-tête → 400,
+   autre projet → 403 ; le skill crée seul `.oovrage-client.json` ; dans ce dossier, `Write notes.md` et
+   `ls` sont refusés par le garde-fou ; ailleurs, l'écriture passe. Claude Code atteint `/mcp` avec l'en-tête
+   et l'adresse tirée de `OOVRAGE_PLATEFORME`. Défauts trouvés et corrigés : `/mcp` renvoyé vers `/sign-in`
+   par le proxy de la plateforme ; entrée de marketplace dans `oovrage` refusée par son test d'anonymat
+   (marketplace propre à ce dépôt). Non joué : la connexion `/mcp` dans une session interactive
+   (`docs/suivi/DETTE.md`).
 5. Go du propriétaire pour la production.

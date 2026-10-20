@@ -1,0 +1,34 @@
+#!/bin/bash
+# En-tête du connecteur MCP du plugin : imprime `{"X-Oovrage-Projet":"<slug>"}`
+# si `<dossier>/.oovrage-client.json` existe et que son champ `projet` est un
+# slug valide ; sinon `{}` (le connecteur part sans projet : la plateforme
+# répond `projet_absent`, jamais un en-tête invalide). Toujours code 0.
+#
+# Appelé par Claude Code (`headersHelper` de `.mcp.json`) avec le dossier de la
+# session en argument ; sans argument, le dossier courant. Bash pur : ni jq, ni
+# node, ni python chez le client.
+
+dossier="${1:-$(pwd)}"
+fichier="$dossier/.oovrage-client.json"
+
+vide() {
+  printf '{}\n'
+  exit 0
+}
+
+[ -f "$fichier" ] || vide
+contenu="$(tr -d '\n\r' < "$fichier" 2>/dev/null)" || vide
+
+# Un objet JSON, au moins en apparence : `{` … `}`.
+nu="$(printf '%s' "$contenu" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+case "$nu" in
+  \{*\}) ;;
+  *) vide ;;
+esac
+
+# Exactement un champ `projet`, chaîne sans guillemet ni échappement.
+valeurs="$(printf '%s' "$nu" | grep -o '"projet"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*:[[:space:]]*"\([^"]*\)"$/\1/')"
+[ "$(printf '%s\n' "$valeurs" | grep -c .)" -eq 1 ] || vide
+[[ "$valeurs" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]] || vide
+
+printf '{"X-Oovrage-Projet":"%s"}\n' "$valeurs"
