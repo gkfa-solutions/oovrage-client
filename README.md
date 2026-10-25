@@ -20,6 +20,9 @@ Dans Claude Code :
    dans le navigateur, avec votre adresse e-mail (lien de connexion).
 4. Relancez `/oovrage-client:correspondant` : la conversation démarre sur votre projet.
 
+Quand une spec à valider vous pose des questions, Claude vous les montre avec notre recommandation et vous
+propose d'y répondre une par une. Valider la spec sans répondre, c'est accepter nos recommandations.
+
 La connexion vaut pour tous vos projets : dans un autre dossier, seul le nom du projet change.
 
 Plateforme autre que `https://oovrage-platform.vercel.app` : définissez la variable `OOVRAGE_PLATEFORME`

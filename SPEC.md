@@ -20,6 +20,13 @@ travaille dans un dossier par projet ; un fichier de config dans ce dossier dit 
     puis écrit le fichier de config. C'est le **seul fichier** que le plugin a le droit de créer.
   - Dossier **avec** fichier de config : le skill lit le projet, appelle `accueil`, et la conversation
     démarre sur ce projet.
+  - Spec de bloc à valider qui pose des questions (au plus quatre, chacune avec notre recommandation) :
+    `accueil` et `questions_en_attente` en donnent le nombre (`propositions_a_valider[].questions`), `lire`
+    les rend (`questions`, `questions_note`). Le skill annonce ce nombre, montre chaque question avec notre
+    recommandation, propose d'y répondre une par une par `commenter` avec `question` = son numéro (après
+    l'accord de la personne, comme tout geste), et dit que valider sans répondre accepte nos
+    recommandations. Une réponse qui s'écarte de la recommandation fait réécrire la spec, republiée à
+    valider.
 - Le plugin embarque son connecteur MCP (déclaré dans le plugin, pas à ajouter à la main).
 - Interdiction de créer, modifier ou supprimer tout autre fichier : un garde-fou (hook `PreToolUse` sur
   Write / Edit / NotebookEdit et sur les commandes shell qui écrivent) bloque tout le reste.
