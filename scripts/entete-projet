@@ -5,18 +5,27 @@
 # répond `projet_absent`, jamais un en-tête invalide). Toujours code 0.
 #
 # Appelé par Claude Code (`headersHelper` de `.mcp.json`) avec le dossier de la
-# session en argument ; sans argument, le dossier courant. Bash pur : ni jq, ni
-# node, ni python chez le client.
+# session en argument. Bash pur : ni jq, ni node, ni python chez le client.
 
-dossier="${1:-$(pwd)}"
-fichier="$dossier/.oovrage-client.json"
+# Le premier dossier qui a le fichier : l'argument, puis CLAUDE_PROJECT_DIR (si
+# l'argument arrive vide ou non développé), puis le dossier courant. Séparateurs
+# Windows `\` ramenés à `/`.
+fichier=""
+for dossier in "${1:-}" "${CLAUDE_PROJECT_DIR:-}" "$(pwd)"; do
+  [ -n "$dossier" ] || continue
+  dossier="${dossier//\\//}"
+  if [ -f "$dossier/.oovrage-client.json" ]; then
+    fichier="$dossier/.oovrage-client.json"
+    break
+  fi
+done
 
 vide() {
   printf '{}\n'
   exit 0
 }
 
-[ -f "$fichier" ] || vide
+[ -n "$fichier" ] || vide
 contenu="$(tr -d '\n\r' < "$fichier" 2>/dev/null)" || vide
 
 # Un objet JSON, au moins en apparence : `{` … `}`.

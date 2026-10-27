@@ -36,4 +36,12 @@ printf '%s' '{"projet":"bistro"}' > "$d/.oovrage-client.json"
 egal "sans argument : dossier courant" '{"X-Oovrage-Projet":"bistro"}' "$(cd "$d" && bash "$E")"
 rm -rf "$d"
 
+# Argument vide ou laissé tel quel (variable non développée) : CLAUDE_PROJECT_DIR, puis le dossier courant.
+d="$(mktemp -d)"
+printf '%s' '{"projet":"cobalt"}' > "$d/.oovrage-client.json"
+egal "argument vide : CLAUDE_PROJECT_DIR" '{"X-Oovrage-Projet":"cobalt"}' "$(cd / && CLAUDE_PROJECT_DIR="$d" bash "$E" "")"
+egal "argument non développé : CLAUDE_PROJECT_DIR" '{"X-Oovrage-Projet":"cobalt"}' "$(cd / && CLAUDE_PROJECT_DIR="$d" bash "$E" '${CLAUDE_PROJECT_DIR}')"
+egal "argument non développé, sans variable : dossier courant" '{"X-Oovrage-Projet":"cobalt"}' "$(cd "$d" && env -u CLAUDE_PROJECT_DIR bash "$E" '${CLAUDE_PROJECT_DIR}')"
+rm -rf "$d"
+
 fin
