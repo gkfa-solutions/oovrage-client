@@ -30,9 +30,6 @@ propose d'y répondre une par une. Valider la spec sans répondre, c'est accepte
 
 La connexion vaut pour tous vos projets : dans un autre dossier, seul le nom du projet change.
 
-Plateforme autre que `https://oovrage-platform.vercel.app` : définissez la variable `OOVRAGE_PLATEFORME`
-avec son adresse avant de lancer Claude Code.
-
 ## Ce que le plugin n'écrit jamais
 
 Le plugin ne crée qu'un seul fichier, `.oovrage-client.json`, dans le dossier du projet. Il contient

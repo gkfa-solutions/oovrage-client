@@ -19,6 +19,7 @@ Lis d'abord `SPEC.md` : le besoin, les choix déjà faits et l'ordre de travail.
 - Le garde-fou n'agit **que** dans un dossier qui contient `.oovrage-client.json`.
 - **Pas d'estimation de temps.** Critères : valeur, complexité, sûreté.
 - **Vérifier par les tests**, puis par un scénario sur un projet d'essai jetable.
+- **Ne change jamais le numéro de version** (`.claude-plugin/plugin.json`) sans qu'on te le demande.
 - Avant tout geste de production (base, déploiement, domaine, réglage comme `OAUTH_ALLOW_LOOPBACK`) :
   montrer la commande exacte et attendre le go.
 
