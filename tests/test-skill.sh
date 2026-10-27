@@ -9,14 +9,16 @@ egal "frontmatter : name" "name: correspondant" "$(sed -n '2,6p' "$S" 2>/dev/nul
 if sed -n '2,6p' "$S" 2>/dev/null | grep -q '^description: .'; then ok "description"; else ko "description" "absente"; fi
 for mot in ".oovrage-client.json" "accueil" "/mcp" "Write" "projet_refuse" "plugin:oovrage-client:correspondant" \
   "propositions_a_valider" "questions_en_attente" "lire" "recommandation" "commenter" "\`question\`" \
-  "valider la spec sans répondre, c'est accepter nos recommandations"; do
+  "valider la spec sans répondre, c'est accepter nos recommandations" \
+  "Vérifier le dossier" "Glob" "Dossier général" "Projet en cours" "<projet>-oovrage" "oovrage/<projet>" \
+  "relancez Claude" "n'écris rien dans le dossier courant"; do
   if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "skill mentionne $mot"; else ko "skill mentionne $mot"; fi
 done
 if grep -qF "https://oovrage-platform.vercel.app" "$S" 2>/dev/null; then ok "adresse par défaut"; else ko "adresse par défaut"; fi
 
 R="$RACINE/README.md"
 ORG="$(git -C "$RACINE" remote get-url origin 2>/dev/null | sed -n 's#.*github\.com[:/]\([^/]*\)/.*#\1#p')"
-for mot in "/plugin marketplace add $ORG/oovrage-client" "/plugin install oovrage-client@oovrage-client" "/oovrage-client:correspondant" "/mcp" "OOVRAGE_PLATEFORME" "Valider la spec sans répondre"; do
+for mot in "/plugin marketplace add $ORG/oovrage-client" "/plugin install oovrage-client@oovrage-client" "/oovrage-client:correspondant" "/mcp" "OOVRAGE_PLATEFORME" "Valider la spec sans répondre" "refuse d'y travailler"; do
   if grep -qF -- "$mot" "$R" 2>/dev/null; then ok "README mentionne $mot"; else ko "README mentionne $mot"; fi
 done
 
