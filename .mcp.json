@@ -3,7 +3,7 @@
     "oovrage-client": {
       "type": "http",
       "url": "https://app.oovrage.fr/mcp",
-      "headersHelper": "\"${CLAUDE_PLUGIN_ROOT}/bin/entete-projet\" \"${CLAUDE_PROJECT_DIR}\""
+      "headersHelper": "\"${CLAUDE_PLUGIN_ROOT}/scripts/entete-projet\" \"${CLAUDE_PROJECT_DIR}\""
     }
   }
 }
