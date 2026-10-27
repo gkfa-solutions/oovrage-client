@@ -69,7 +69,8 @@ que ces fichiers-là, est le bon dossier.
 
 1. Appelle l'outil `accueil` du serveur MCP `oovrage-client`. À **chaque** appel d'un outil de ce
    serveur, passe l'argument `projet` : la valeur du champ `projet` de `.oovrage-client.json`.
-2. Poursuis la conversation à partir de sa réponse : c'est lui qui dit quoi faire et comment.
+2. Poursuis la conversation à partir de sa réponse : c'est lui qui dit quoi faire et comment. Ton
+   premier message montre le visuel d'accueil du point 6.
 3. Si l'appel échoue faute de connexion : donne la consigne `/mcp` du point 3.4.
 4. S'il répond `projet_absent` : tu as oublié l'argument `projet` ; refais l'appel avec. Ne touche pas
    au fichier (l'adresse `plateforme` qu'il contient n'est jamais lue).
@@ -96,6 +97,38 @@ que ces fichiers-là, est le bon dossier.
    de nouveau à valider.
 5. Si `commenter` répond « cette spec ne pose pas de question à ce numéro », relis la spec avec `lire` et
    reprends le bon numéro.
+
+## 6. Le visuel d'accueil
+
+Une fois `accueil` lu, appelle aussi `reprendre` (avec l'argument `projet`). Puis montre ce qui attend la
+personne en un regard, avec l'outil `show_widget` (serveur `visualize`, dans l'application de bureau).
+S'il n'est pas dans ta liste d'outils, charge-le avec `ToolSearch` (`select:mcp__visualize__show_widget`).
+Toujours absent (terminal) : écris le même contenu en texte court, sans dire qu'un visuel manque.
+
+Le visuel ne dit que ce que les deux réponses contiennent : rien de deviné, aucune date ni aucun chiffre de
+mémoire, des titres et jamais d'identifiant nu. Trois cartes, dans cet ordre :
+
+1. **À faire pour vous**, fond `--bg-warning` s'il y a quelque chose, sinon neutre avec « Rien pour
+   l'instant ». Depuis `ce_qui_t_attend` : propositions à valider (et combien de questions elles posent),
+   cahiers à jouer (et leurs cas restants), questions en attente, tâches (et leur échéance), dépôts à
+   compléter. Un bouton par sorte présente : « Voir les propositions », « Jouer un cahier », « Répondre aux
+   questions », « Voir mes tâches », « Compléter un dépôt ».
+2. **Depuis votre dernière visite**, neutre : ce que l'équipe a fait de ses dépôts (`mes_depots` et leur
+   relevé) et les réponses reçues (`reponses_recues`), en quelques lignes. Rien de neuf : « Rien de neuf
+   depuis votre dernière visite. »
+3. **Le projet**, neutre : les livraisons récentes (`livraisons_recentes`) et un lien vers la plateforme
+   (`lien_plateforme`).
+
+Règles de rendu : un fragment HTML sans `<html>` ni `<body>`, styles en ligne, couleurs par les variables
+de l'hôte (`--surface-1`, `--bg-warning`, `--text-primary`, `--text-secondary`, `--text-muted`,
+`--border`, `--radius`) ; grille `repeat(auto-fit, minmax(220px, 1fr))`, cartes à `border-radius: 12px` ;
+pas d'ombre, de dégradé ni d'emoji ; première ligne `<h2 class="sr-only">` d'une phrase ; en tête, en
+petit, le nom du Correspondant et sa version. Chaque bouton est `type="button"` avec
+`onclick="sendPrompt('…')"`, et la phrase envoyée est celle qu'aurait tapée la personne (« Montrez-moi les
+propositions à valider. »). Sous le visuel, une seule question : « Par quoi voulez-vous commencer ? »
+
+Montre ce visuel à l'arrivée seulement, ou quand la personne demande où en est son projet ; le reste de la
+conversation est en texte.
 
 ## Règles
 
