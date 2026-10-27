@@ -28,3 +28,8 @@ Lis d'abord `SPEC.md` : le besoin, les choix déjà faits et l'ordre de travail.
 Point 1 de l'ordre de `SPEC.md` : vérifier si Claude Code sait ajouter à un serveur MCP de plugin un
 en-tête calculé depuis le dossier courant. Le résultat tranche entre la piste A et la piste B ; mets-le à
 jour dans `SPEC.md` avant d'aller plus loin.
+
+## Mise en production (MEP)
+
+- À chaque MEP demandée, fournir aussi une archive zip du plugin pour l'envoyer sur claude.ai :
+  `git archive --format=zip -o ~/Downloads/oovrage-client-<version>.zip <branche livrée>`.
