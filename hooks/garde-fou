@@ -5,7 +5,7 @@
 # N'agit QUE dans un dossier client, c'est-à-dire un dossier qui contient
 # `.oovrage-client.json` ($CLAUDE_PROJECT_DIR, sinon le `cwd` du hook) :
 # ailleurs (session du pilote, autre projet), il sort en 0 sans rien dire.
-# Dans un dossier client, seul ce fichier, par son chemin absolu exact, peut
+# Dans un dossier client, seul ce fichier, par un chemin absolu, peut
 # être écrit (Write, Edit, MultiEdit) ; tout le reste est bloqué (code 2),
 # y compris tout le shell (reconnaître sûrement une commande qui écrit est
 # impossible, et le client n'en a pas besoin) et un appel illisible.
@@ -16,17 +16,22 @@ MESSAGE="Dossier client Oovrage : seul .oovrage-client.json peut être écrit ic
 entree="$(tr -d '\n\r')"
 
 # champ <nom> : valeur d'un champ chaîne, seulement s'il apparaît exactement une
-# fois et sans échappement ; vide sinon.
+# fois ; vide sinon. Seul l'échappement `\\` (barre oblique inversée des chemins
+# Windows) est admis et décodé ; tout autre échappement rend la valeur vide.
 champ() {
   local v
-  v="$(printf '%s' "$entree" | grep -o "\"$1\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" | sed 's/.*:[[:space:]]*"\([^"]*\)"$/\1/')"
+  v="$(printf '%s' "$entree" | grep -oE '"'"$1"'"[[:space:]]*:[[:space:]]*"([^"\\]|\\\\)*"' | sed 's/^[^:]*:[[:space:]]*"//; s/"$//')"
   [ "$(printf '%s\n' "$v" | grep -c .)" -eq 1 ] || return 0
-  case "$v" in *\\*) return 0 ;; esac
-  printf '%s' "$v"
+  printf '%s' "$v" | sed 's/\\\\/\\/g'
 }
 
-dossier="${CLAUDE_PROJECT_DIR:-}"
-[ -n "$dossier" ] || dossier="$(champ cwd)"
+# chemin <chemin> : séparateurs Windows `\` ramenés à `/`.
+chemin() {
+  printf '%s' "${1//\\//}"
+}
+
+dossier="$(chemin "${CLAUDE_PROJECT_DIR:-}")"
+[ -n "$dossier" ] || dossier="$(chemin "$(champ cwd)")"
 [ -n "$dossier" ] && [ -f "$dossier/.oovrage-client.json" ] || exit 0
 
 bloque() {
@@ -36,7 +41,17 @@ bloque() {
 
 case "$(champ tool_name)" in
   Write | Edit | MultiEdit)
-    [ "$(champ file_path)" = "$dossier/.oovrage-client.json" ] && exit 0
+    # Chemin absolu (`/…` ou `C:/…`), nommé `.oovrage-client.json`, dans le
+    # dossier client lui-même : `-ef` compare les dossiers sur le disque, ce qui
+    # absorbe sous Windows la casse et les formes `C:/…` et `/c/…`.
+    cible="$(chemin "$(champ file_path)")"
+    case "$cible" in
+      /* | [A-Za-z]:/*) ;;
+      *) bloque ;;
+    esac
+    if [ "${cible##*/}" = ".oovrage-client.json" ]; then
+      [ "${cible%/*}" = "$dossier" ] || [ "${cible%/*}" -ef "$dossier" ] && exit 0
+    fi
     bloque
     ;;
   *) bloque ;;

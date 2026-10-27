@@ -67,12 +67,15 @@ que ces fichiers-là, est le bon dossier.
 
 ## 4. Le fichier existe : démarrer la conversation
 
-1. Appelle l'outil `accueil` du serveur MCP `oovrage-client`.
+1. Appelle l'outil `accueil` du serveur MCP `oovrage-client`. À **chaque** appel d'un outil de ce
+   serveur, passe l'argument `projet` : la valeur du champ `projet` de `.oovrage-client.json`.
 2. Poursuis la conversation à partir de sa réponse : c'est lui qui dit quoi faire et comment.
 3. Si l'appel échoue faute de connexion : donne la consigne `/mcp` du point 3.4.
-4. S'il répond `projet_refuse` : dis que ce compte n'a pas accès à ce projet, et de vérifier le nom du
+4. S'il répond `projet_absent` : tu as oublié l'argument `projet` ; refais l'appel avec. Ne touche pas
+   au fichier (l'adresse `plateforme` qu'il contient n'est jamais lue).
+5. S'il répond `projet_refuse` : dis que ce compte n'a pas accès à ce projet, et de vérifier le nom du
    projet avec le pilote.
-5. Dans `ce_qui_t_attend.propositions_a_valider` d'`accueil` (et dans `questions_en_attente`), une spec
+6. Dans `ce_qui_t_attend.propositions_a_valider` d'`accueil` (et dans `questions_en_attente`), une spec
    qui porte `questions` pose ce nombre de questions à la personne. Annonce-le avec la spec : « La spec
    … est à valider et vous pose 2 questions. »
 

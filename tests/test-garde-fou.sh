@@ -66,5 +66,15 @@ verifie "casse : Write notes.md" 2 "$casse" Write "{\"file_path\":\"$casse/notes
 verifie "sans CLAUDE_PROJECT_DIR : cwd client" 2 "" Write '{"file_path":"notes.md","content":"a"}' "$client"
 verifie "sans CLAUDE_PROJECT_DIR : cwd libre" 0 "" Write "{\"file_path\":\"$libre/x.md\",\"content\":\"a\"}" "$libre"
 
+# Windows : chemins à barres obliques inversées (échappées en JSON) et lettre de lecteur.
+w="${client//\//\\\\}"
+verifie "windows : Write config" 0 "$client" Write "{\"file_path\":\"$w\\\\.oovrage-client.json\",\"content\":\"{}\"}" "$w"
+verifie "windows : Write notes.md" 2 "$client" Write "{\"file_path\":\"$w\\\\notes.md\",\"content\":\"a\"}" "$w"
+verifie "windows : sans CLAUDE_PROJECT_DIR, cwd client" 2 "" Write "{\"file_path\":\"$w\\\\notes.md\",\"content\":\"a\"}" "$w"
+verifie "windows : sans CLAUDE_PROJECT_DIR, Write config" 0 "" Write "{\"file_path\":\"$w\\\\.oovrage-client.json\",\"content\":\"{}\"}" "$w"
+verifie "windows : config d'un autre dossier" 2 "$client" Write "{\"file_path\":\"${autre//\//\\\\}\\\\.oovrage-client.json\",\"content\":\"{}\"}" "$w"
+verifie "windows : config relatif" 2 "$client" Write '{"file_path":".\\\\.oovrage-client.json","content":"{}"}' "$w"
+verifie "windows : guillemet échappé" 2 "$client" Write "{\"file_path\":\"$client/.oovrage-client.json\\\"x\",\"content\":\"a\"}" "$client"
+
 rm -rf "$libre" "$client" "$autre" "$casse"
 fin

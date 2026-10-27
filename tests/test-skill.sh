@@ -7,7 +7,7 @@ S="$RACINE/skills/correspondant/SKILL.md"
 if [ -f "$S" ]; then ok "skill présent"; else ko "skill présent" "$S absent"; fi
 egal "frontmatter : name" "name: correspondant" "$(sed -n '2,6p' "$S" 2>/dev/null | grep '^name:')"
 if sed -n '2,6p' "$S" 2>/dev/null | grep -q '^description: .'; then ok "description"; else ko "description" "absente"; fi
-for mot in ".oovrage-client.json" "accueil" "/mcp" "Write" "projet_refuse" "plugin:oovrage-client:correspondant" \
+for mot in ".oovrage-client.json" "accueil" "l'argument \`projet\`" "/mcp" "Write" "projet_refuse" "plugin:oovrage-client:correspondant" \
   "propositions_a_valider" "questions_en_attente" "lire" "recommandation" "commenter" "\`question\`" \
   "valider la spec sans répondre, c'est accepter nos recommandations" \
   "Vérifier le dossier" "Glob" "Dossier général" "Projet en cours" "<projet>-oovrage" "oovrage/<projet>" \
