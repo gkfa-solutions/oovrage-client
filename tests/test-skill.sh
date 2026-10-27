@@ -11,7 +11,8 @@ for mot in ".oovrage-client.json" "accueil" "/mcp" "Write" "projet_refuse" "plug
   "propositions_a_valider" "questions_en_attente" "lire" "recommandation" "commenter" "\`question\`" \
   "valider la spec sans répondre, c'est accepter nos recommandations" \
   "Vérifier le dossier" "Glob" "Dossier général" "Projet en cours" "<projet>-oovrage" "oovrage/<projet>" \
-  "relancez Claude" "n'écris rien dans le dossier courant"; do
+  "relancez Claude" "n'écris rien dans le dossier courant" \
+  "Juge le dossier" ".claude/settings.local.json" ".DS_Store" "n'en parle pas et continue"; do
   if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "skill mentionne $mot"; else ko "skill mentionne $mot"; fi
 done
 if grep -qF "https://oovrage-platform.vercel.app" "$S" 2>/dev/null; then ok "adresse par défaut"; else ko "adresse par défaut"; fi

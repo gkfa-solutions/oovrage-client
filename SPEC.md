@@ -20,9 +20,12 @@ travaille dans un dossier par projet ; un fichier de config dans ce dossier dit 
     puis écrit le fichier de config. C'est le **seul fichier** que le plugin a le droit de créer.
   - Avant tout, le skill vérifie le dossier (son chemin, et son contenu par `Glob`). Dossier général de
     l'ordinateur (racine, dossier personnel, Bureau, Documents, Téléchargements, dossier du système) ou
-    dossier d'un projet en cours (`.git`, `_projet`, `.claude`, `package.json`, `src`, fichiers de
-    travail…) : il avertit, n'y écrit rien, propose un nouveau dossier (`~/oovrage/<projet>` pour un
-    dossier général, `<projet>-oovrage` à côté pour un projet en cours), y écrit le fichier de config
+    dossier d'un projet en cours (`.git`, `_projet`, `package.json`, `src`, fichiers de travail…). Le
+    skill juge, il ne coche pas une liste : ce que le plugin et Claude Code créent eux-mêmes
+    (`.oovrage-client.json`, `.claude/settings.local.json`, `.DS_Store`…) ne compte pas, un ou deux
+    documents posés par la personne non plus, et un dossier qui va bien passe sans un mot.
+    Sinon : il avertit, n'y écrit rien, propose un nouveau dossier (`~/oovrage/<projet>` pour un dossier
+    général, `<projet>-oovrage` à côté pour un projet en cours), y écrit le fichier de config
     avec l'accord de la personne, et lui demande de relancer Claude Code dedans. Si le fichier de config
     est déjà dans un tel dossier, le garde-fou empêche d'écrire ailleurs : le skill demande à la personne
     de déplacer le fichier elle-même.

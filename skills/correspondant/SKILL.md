@@ -15,8 +15,14 @@ Lis `.oovrage-client.json` dans le dossier courant, avec l'outil `Read`.
 ## 2. Vérifier le dossier
 
 Avant tout, regarde où tu es : le chemin du dossier courant, et son contenu avec l'outil `Glob`
-(motifs `*`, `.*` et `*/*`, rien de plus profond). Ne travaille jamais dans un dossier qui n'est pas
-fait pour ça : ni un dossier général de l'ordinateur, ni le dossier d'un projet en cours de la personne.
+(motifs `*`, `.*` et `*/*`, rien de plus profond). Juge le dossier, ne coche pas une liste : la question
+est « est-ce un dossier réservé à ce projet Oovrage, ou un dossier où la personne a autre chose à
+protéger ? ». Si le dossier va bien, n'en parle pas et continue.
+
+Ne compte pas ce que le plugin et Claude Code créent eux-mêmes : `.oovrage-client.json`,
+`.claude/settings.local.json` (Claude Code l'écrit quand la personne accepte une autorisation), et les
+fichiers cachés du système (`.DS_Store`, `Thumbs.db`, `desktop.ini`). Un dossier vide, ou qui ne contient
+que ces fichiers-là, est le bon dossier.
 
 1. **Dossier général** : la racine (`/`, `C:\`), le dossier personnel (`~`, `/Users/<nom>`,
    `/home/<nom>`, `C:\Users\<nom>`), le Bureau (`Desktop`), `Documents`, `Téléchargements`
@@ -24,19 +30,21 @@ fait pour ça : ni un dossier général de l'ordinateur, ni le dossier d'un proj
    rempli des documents de la personne. Avertis-la : « Ce dossier est un dossier général de votre
    ordinateur. Je ne travaille pas ici. » Puis fais comme au point 2.3, avec un nouveau dossier
    `oovrage/<projet>` dans son dossier personnel.
-2. **Projet en cours** : le dossier contient un projet de la personne, par exemple `.git`, `_projet`,
-   `_pilotage`, `.claude`, `CLAUDE.md`, `AGENTS.md`, `package.json`, `pyproject.toml`, `composer.json`,
-   `src`, `node_modules`, ou des fichiers de travail qui ne viennent pas du plugin. Dis : « Ce dossier
-   ressemble à un projet en cours. Je ne travaille pas dedans, pour ne rien y toucher. » Puis fais comme
-   au point 2.3, avec un nouveau dossier `<projet>-oovrage` à côté de celui-ci (dans le même dossier
-   parent).
+2. **Projet en cours** : de vrais signes d'un travail de la personne, comme un dépôt `.git`, du code
+   (`src`, `package.json`, `pyproject.toml`, `composer.json`, `node_modules`…), un projet piloté
+   (`_projet`, `_pilotage`, `CLAUDE.md`, `AGENTS.md`), un `.claude` qui contient autre chose que
+   `settings.local.json`, ou un ensemble de fichiers de travail. Un ou deux documents posés là par la
+   personne (un cahier des charges, une capture) ne suffisent pas : le dossier reste bon. Dis : « Ce
+   dossier ressemble à un projet en cours. Je ne travaille pas dedans, pour ne rien y toucher. » Puis fais
+   comme au point 2.3, avec un nouveau dossier `<projet>-oovrage` à côté de celui-ci (dans le même
+   dossier parent).
 3. **Proposer le bon dossier** : demande le nom court du projet (comme au point 3.1), puis propose le
    nouveau dossier par son chemin complet. Si ce dossier existe déjà et n'est pas vide, propose-en un
    autre. Avec l'accord de la personne, écris `.oovrage-client.json` **dans ce nouveau dossier** avec
    l'outil `Write` (le dossier est créé avec), et dis : « Quittez cette session, puis relancez Claude
    Code dans le dossier `<chemin complet>` (dans un terminal : `cd "<chemin complet>"` puis `claude`), et
    tapez `/oovrage-client:correspondant`. » Arrête-toi là : n'écris rien dans le dossier courant.
-4. **Dossier vide**, ou qui ne contient que `.oovrage-client.json` : c'est le bon dossier, continue.
+4. Dans le doute, demande à la personne si ce dossier est bien réservé à ce projet, et crois sa réponse.
 5. Si `.oovrage-client.json` existe déjà dans un dossier général ou dans un projet en cours, dis-le de la
    même façon, sans rien écrire (le garde-fou l'empêche) : propose à la personne de créer elle-même le
    nouveau dossier du point 2.3, d'y déplacer `.oovrage-client.json`, puis d'y relancer Claude Code et
