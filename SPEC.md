@@ -67,7 +67,7 @@ Aucun jeton dedans : la connexion est gardée par Claude Code dans son propre st
      et consigne à Claude de le passer à chaque appel.
    - **Résultat de l'essai (2026-10-19, Claude Code 2.1.303) : piste A retenue.** Syntaxe qui marche dans
      le `.mcp.json` du plugin :
-     `"headersHelper": "${CLAUDE_PLUGIN_ROOT}/bin/entete-projet \"${CLAUDE_PROJECT_DIR}\""`.
+     `"headersHelper": "${CLAUDE_PLUGIN_ROOT}/scripts/entete-projet \"${CLAUDE_PROJECT_DIR}\""`.
      `${CLAUDE_PROJECT_DIR}` est remplacé par Claude Code dans la config (le helper reçoit le chemin du
      dossier de la session en `$1`) ; la variable n'est pas dans l'environnement du helper, et le helper
      tourne dans le dossier du plugin (son `pwd` ne sert donc pas). L'en-tête part sur chaque requête,

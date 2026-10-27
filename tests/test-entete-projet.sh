@@ -1,7 +1,7 @@
 #!/bin/bash
-# bin/entete-projet : en-tête X-Oovrage-Projet calculé depuis .oovrage-client.json.
+# scripts/entete-projet : en-tête X-Oovrage-Projet calculé depuis .oovrage-client.json.
 . "$(dirname "$0")/lib.sh"
-E="$RACINE/bin/entete-projet"
+E="$RACINE/scripts/entete-projet"
 
 # cas <nom> <contenu du fichier ou __AUCUN__> <sortie attendue>
 cas() {
