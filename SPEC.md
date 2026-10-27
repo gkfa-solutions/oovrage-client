@@ -72,11 +72,14 @@ Aucun jeton dedans : la connexion est gardée par Claude Code dans son propre st
      dossier de la session en `$1`) ; la variable n'est pas dans l'environnement du helper, et le helper
      tourne dans le dossier du plugin (son `pwd` ne sert donc pas). L'en-tête part sur chaque requête,
      y compris celles de découverte OAuth (`/.well-known/…`, `/register`) : sans effet.
+   - **Puis piste B ajoutée (2026-10-27)** : l'application Claude de bureau sous Windows n'envoie pas
+     l'en-tête (connexion refusée en `400 projet_absent`). Chaque outil déclare désormais l'argument
+     `projet`, requis, que le skill passe à chaque appel ; l'en-tête reste un repli.
    - Décisions prises par le plan : nom du skill `correspondant` ; nom du serveur MCP `oovrage-client` (pas `correspondant`, qui se
      confondait avec un ancien connecteur du même nom chez le client) ; adresse du connecteur
      `https://app.oovrage.fr/mcp`, en dur (une adresse variable empêchait la connexion depuis
-     `/mcp` dans l'application de bureau : « points at a different server URL ») ; sans en-tête, `/mcp` répond
-     `400 projet_absent` ; projet inconnu ou dont la personne n'est pas membre : `403 projet_refuse`
+     `/mcp` dans l'application de bureau : « points at a different server URL ») ; un appel d'outil sans
+     argument `projet` ni en-tête reçoit l'erreur d'outil `projet_absent` ; projet inconnu ou dont la personne n'est pas membre : `403 projet_refuse`
      (même message) ; portée OAuth `correspondant`, ressource `<origine>/mcp` ; dans un dossier client,
      **toute** commande shell est bloquée (reconnaître sûrement une commande qui écrit est impossible, et
      le client n'en a pas besoin).
