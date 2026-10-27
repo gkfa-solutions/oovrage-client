@@ -20,6 +20,11 @@ Dans Claude Code :
    dans le navigateur, avec votre adresse e-mail (lien de connexion).
 4. Relancez `/oovrage-client:correspondant` : la conversation démarre sur votre projet.
 
+Le dossier doit être réservé au projet. Si vous lancez le plugin dans un dossier général de l'ordinateur
+(dossier personnel, Bureau, Documents, Téléchargements…) ou dans un dossier qui ressemble à un projet en
+cours, il refuse d'y travailler : il vous propose un nouveau dossier, y crée le fichier avec votre accord,
+et vous demande de relancer Claude Code dedans.
+
 Quand une spec à valider vous pose des questions, Claude vous les montre avec notre recommandation et vous
 propose d'y répondre une par une. Valider la spec sans répondre, c'est accepter nos recommandations.
 
