@@ -67,7 +67,7 @@ que ces fichiers-là, est le bon dossier.
 
 ## 4. Le fichier existe : démarrer la conversation
 
-1. Appelle l'outil `accueil` du serveur MCP `correspondant`.
+1. Appelle l'outil `accueil` du serveur MCP `oovrage-client`.
 2. Poursuis la conversation à partir de sa réponse : c'est lui qui dit quoi faire et comment.
 3. Si l'appel échoue faute de connexion : donne la consigne `/mcp` du point 3.4.
 4. S'il répond `projet_refuse` : dis que ce compte n'a pas accès à ce projet, et de vérifier le nom du

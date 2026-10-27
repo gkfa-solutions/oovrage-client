@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "correspondant": {
+    "oovrage-client": {
       "type": "http",
       "url": "https://app.oovrage.fr/mcp",
       "headersHelper": "\"${CLAUDE_PLUGIN_ROOT}/bin/entete-projet\" \"${CLAUDE_PROJECT_DIR}\""

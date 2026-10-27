@@ -72,7 +72,8 @@ Aucun jeton dedans : la connexion est gardée par Claude Code dans son propre st
      dossier de la session en `$1`) ; la variable n'est pas dans l'environnement du helper, et le helper
      tourne dans le dossier du plugin (son `pwd` ne sert donc pas). L'en-tête part sur chaque requête,
      y compris celles de découverte OAuth (`/.well-known/…`, `/register`) : sans effet.
-   - Décisions prises par le plan : nom du skill `correspondant` ; adresse du connecteur
+   - Décisions prises par le plan : nom du skill `correspondant` ; nom du serveur MCP `oovrage-client` (pas `correspondant`, qui se
+     confondait avec un ancien connecteur du même nom chez le client) ; adresse du connecteur
      `https://app.oovrage.fr/mcp`, en dur (une adresse variable empêchait la connexion depuis
      `/mcp` dans l'application de bureau : « points at a different server URL ») ; sans en-tête, `/mcp` répond
      `400 projet_absent` ; projet inconnu ou dont la personne n'est pas membre : `403 projet_refuse`
