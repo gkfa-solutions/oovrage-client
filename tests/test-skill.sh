@@ -15,11 +15,11 @@ for mot in ".oovrage-client.json" "accueil" "/mcp" "Write" "projet_refuse" "plug
   "Juge le dossier" ".claude/settings.local.json" ".DS_Store" "n'en parle pas et continue"; do
   if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "skill mentionne $mot"; else ko "skill mentionne $mot"; fi
 done
-if grep -qF "https://oovrage-platform.vercel.app" "$S" 2>/dev/null; then ok "adresse par défaut"; else ko "adresse par défaut"; fi
+if grep -qF "https://app.oovrage.fr" "$S" 2>/dev/null; then ok "adresse par défaut"; else ko "adresse par défaut"; fi
 
 R="$RACINE/README.md"
 ORG="$(git -C "$RACINE" remote get-url origin 2>/dev/null | sed -n 's#.*github\.com[:/]\([^/]*\)/.*#\1#p')"
-for mot in "/plugin marketplace add $ORG/oovrage-client" "/plugin install oovrage-client@oovrage-client" "/oovrage-client:correspondant" "/mcp" "OOVRAGE_PLATEFORME" "Valider la spec sans répondre" "refuse d'y travailler"; do
+for mot in "/plugin marketplace add $ORG/oovrage-client" "/plugin install oovrage-client@oovrage-client" "/oovrage-client:correspondant" "/mcp" "Valider la spec sans répondre" "refuse d'y travailler"; do
   if grep -qF -- "$mot" "$R" 2>/dev/null; then ok "README mentionne $mot"; else ko "README mentionne $mot"; fi
 done
 

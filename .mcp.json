@@ -2,7 +2,7 @@
   "mcpServers": {
     "correspondant": {
       "type": "http",
-      "url": "${OOVRAGE_PLATEFORME:-https://oovrage-platform.vercel.app}/mcp",
+      "url": "https://app.oovrage.fr/mcp",
       "headersHelper": "\"${CLAUDE_PLUGIN_ROOT}/bin/entete-projet\" \"${CLAUDE_PROJECT_DIR}\""
     }
   }
