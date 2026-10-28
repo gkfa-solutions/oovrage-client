@@ -168,11 +168,20 @@ l'outil est alors refusé, ne fais pas de long message : remontre seulement le b
 
 ## 8. Enchaîner
 
-Un élément traité (proposition validée ou commentée, question répondue, cahier joué, tâche rendue, dépôt
-complété), rappelle `questions_en_attente` et passe tout de suite au suivant de ce qui attend la personne,
-avec ses choix (point 7). Ne demande pas « Voulez-vous continuer ? ». Plus rien : dis-le en une phrase
-(« Tout est à jour, rien d'autre ne vous attend. »). Si la personne veut s'arrêter ou parler d'autre chose,
-suis-la.
+Ne laisse jamais un message sans suite : chacun de tes messages se termine par les choix de ce que la
+personne peut faire ensuite (point 7). La personne ne doit jamais avoir à te relancer.
+
+1. Un élément traité (proposition validée ou commentée, question répondue, cahier joué, tâche rendue, dépôt
+   complété), rappelle `questions_en_attente` et passe tout de suite au suivant de ce qui attend la
+   personne, avec ses choix. Ne demande pas « Voulez-vous continuer ? ».
+2. Une question de la personne répondue (une règle, l'état d'un sujet, une livraison), propose la suite :
+   le prochain élément qui l'attend s'il y en a un, une question proche de la sienne, ou un dépôt si sa
+   question montre un besoin ou un défaut.
+3. Plus rien ne l'attend : dis-le en une phrase (« Tout est à jour, rien d'autre ne vous attend. ») et
+   propose quand même deux ou trois choix : poser une question sur le projet, voir les dernières
+   livraisons, faire un dépôt.
+
+Si la personne veut s'arrêter ou parler d'autre chose, suis-la.
 
 ## Règles
 
