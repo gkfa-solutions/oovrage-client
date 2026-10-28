@@ -30,7 +30,12 @@ travaille dans un dossier par projet ; un fichier de config dans ce dossier dit 
     est déjà dans un tel dossier, le garde-fou empêche d'écrire ailleurs : le skill demande à la personne
     de déplacer le fichier elle-même.
   - Dossier **avec** fichier de config : le skill lit le projet, appelle `accueil`, et la conversation
-    démarre sur ce projet.
+    démarre sur ce projet. Si le fichier n'a pas de champ `organisation` (fichier d'avant les
+    organisations), le skill appelle d'abord `mes_organisations` : une seule, il la prend sans question ;
+    plusieurs, il demande une fois ; puis il réécrit le fichier en gardant `plateforme` et `projet`. Il ne la
+    redemande jamais.
+  - Fichier absent : organisation d'abord (`mes_organisations`, automatique s'il n'y en a qu'une), puis
+    `mes_projets` avec l'argument `organisation`.
   - Spec de bloc à valider qui pose des questions (au plus quatre, chacune avec notre recommandation) :
     `accueil` et `questions_en_attente` en donnent le nombre (`propositions_a_valider[].questions`), `lire`
     les rend (`questions`, `questions_note`). Le skill annonce ce nombre, montre chaque question avec notre
@@ -51,8 +56,12 @@ Nom proposé : `.oovrage-client.json` (jamais `_projet/`, `_suivi.yaml`, `.claud
 `oovrage` reconnaît comme un projet piloté). Contenu proposé :
 
 ```json
-{ "plateforme": "https://plateforme.example", "projet": "atlas" }
+{ "plateforme": "https://plateforme.example", "organisation": "fjord", "projet": "atlas" }
 ```
+
+`organisation` est l'identifiant de l'organisation du projet, rempli une seule fois au démarrage (voir
+plus haut) ; il part avec l'en-tête `X-Oovrage-Organisation` quand il est valide (même règle de forme que
+`projet`), et il est omis sinon.
 
 Aucun jeton dedans : la connexion est gardée par Claude Code dans son propre stockage, hors du dossier.
 
@@ -83,6 +92,10 @@ Aucun jeton dedans : la connexion est gardée par Claude Code dans son propre st
      (même message) ; portée OAuth `correspondant`, ressource `<origine>/mcp` ; dans un dossier client,
      **toute** commande shell est bloquée (reconnaître sûrement une commande qui écrit est impossible, et
      le client n'en a pas besoin).
+   - **Organisations (2026-10-28)** : outil `mes_organisations` (sans argument) → `{ organisations: [{
+     organisation, nom }] }` ; `mes_projets` accepte l'argument facultatif `organisation` (à défaut,
+     l'en-tête facultatif `X-Oovrage-Organisation`) ; sans l'un ni l'autre, les projets de toutes les
+     organisations de la personne.
 2. **Jeton lié à la personne**, plus au projet : aujourd'hui `resolveMcpToken(token, slug)`
    (`src/lib/correspondant/auth.ts`) refuse un jeton d'un autre projet. Avec l'adresse unique, le jeton
    porte l'email ; à chaque requête la plateforme vérifie que la personne est membre du projet demandé, puis
