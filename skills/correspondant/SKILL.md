@@ -10,7 +10,8 @@ Vouvoie toujours la personne, même si le Correspondant ou `accueil` tutoie. Phr
 
 ## 1. Lire le fichier du dossier
 
-Lis `.oovrage-client.json` dans le dossier courant, avec l'outil `Read`.
+Lis `.oovrage-client.json` dans le dossier courant, avec l'outil `Read`. Absent : point 3. Présent mais
+sans champ `organisation` : point 3 d'abord (il ne touche qu'à ce champ), puis point 4.
 
 ## 2. Vérifier le dossier
 
@@ -38,8 +39,8 @@ que ces fichiers-là, est le bon dossier.
    dossier ressemble à un projet en cours. Je ne travaille pas dedans, pour ne rien y toucher. » Puis fais
    comme au point 2.3, avec un nouveau dossier `<projet>-oovrage` à côté de celui-ci (dans le même
    dossier parent).
-3. **Proposer le bon dossier** : fais choisir le projet (points 3.1 à 3.4), puis propose le nouveau
-   dossier par son chemin complet, nommé avec le nom court du projet choisi. Si ce dossier existe déjà
+3. **Proposer le bon dossier** : fais choisir l'organisation et le projet (points 3.1 à 3.4, puis 3.6 à 3.9), puis propose le nouveau
+   dossier par son chemin complet, nommé avec le nom court du projet choisi (le fichier porte aussi l'`organisation`). Si ce dossier existe déjà
    et n'est pas vide, propose-en un autre. Avec l'accord de la personne, écris `.oovrage-client.json`
    **dans ce nouveau dossier** avec l'outil `Write` (le dossier est créé avec), et dis : « Quittez cette session, puis relancez Claude
    Code dans le dossier `<chemin complet>` (dans un terminal : `cd "<chemin complet>"` puis `claude`), et
@@ -50,28 +51,39 @@ que ces fichiers-là, est le bon dossier.
    nouveau dossier du point 2.3, d'y déplacer `.oovrage-client.json`, puis d'y relancer Claude Code et
    `/oovrage-client:correspondant`. Arrête-toi là.
 
-## 3. Le fichier n'existe pas : choisir le projet et créer le fichier
+## 3. Choisir l'organisation et le projet, écrire le fichier
 
-Ne demande jamais le nom court du projet : la personne choisit parmi les projets auxquels elle a accès.
+Ce point sert quand le fichier n'existe pas, et aussi quand il existe sans champ `organisation` (un
+fichier d'avant les organisations). Ne demande jamais le nom court du projet ni l'identifiant de l'organisation : la personne choisit parmi ce auquel elle a accès.
+Ne demande jamais l'organisation deux fois : une fois écrite dans le fichier, elle n'est plus jamais redemandée.
 
-1. Appelle l'outil `mes_projets` du serveur MCP `oovrage-client`, sans argument. Il rend `projets` :
-   pour chacun, `projet` (le nom court) et `nom`.
+1. Appelle l'outil `mes_organisations` du serveur MCP `oovrage-client`, sans argument. Il rend
+   `organisations` : pour chacune, `organisation` (l'identifiant) et `nom`.
 2. Si l'appel échoue faute de connexion, dis : « Tapez `/mcp`, choisissez
    `plugin:oovrage-client:correspondant` et connectez-le (la connexion se fait dans le navigateur). Puis
    relancez `/oovrage-client:correspondant`. » Arrête-toi là.
-3. Si `projets` est vide, dis : « Votre compte n'a accès à aucun projet suivi par un Correspondant.
+3. Si `organisations` est vide, dis : « Votre compte n'a accès à aucun projet suivi par un Correspondant.
    Demandez à l'équipe de vous ajouter au projet. » Arrête-toi là.
-4. Un seul projet : prends-le et dis-le (« Je prépare ce dossier pour le projet Atlas. »). Plusieurs :
-   demande lequel, en montrant les projets par leur `nom` (outil `AskUserQuestion` s'il est dans ta
-   liste, sinon une liste numérotée). Le nom court ne sert qu'au fichier.
-5. L'adresse de la plateforme est `https://app.oovrage.fr`. Ne la demande pas.
-6. Écris le fichier **avec l'outil `Write`**, et rien d'autre, avec le `projet` choisi :
+4. Une seule organisation : prends-la sans rien demander. Plusieurs : demande laquelle, en montrant les
+   organisations par leur `nom` (outil `AskUserQuestion` s'il est dans ta liste, sinon une liste
+   numérotée).
+5. **Fichier déjà là, sans `organisation`** : réécris-le avec l'outil `Write`, en gardant `plateforme` et
+   `projet` tels quels et en ajoutant l'`organisation` choisie, puis enchaîne sur le point 4. Ne pose
+   aucune question sur le projet.
+6. **Fichier absent** : appelle `mes_projets` avec l'argument `organisation` (l'identifiant choisi). Il
+   rend `projets` : pour chacun, `projet` (le nom court) et `nom`. Si `projets` est vide, dis la même
+   phrase qu'au point 3 et arrête-toi là.
+7. Un seul projet : prends-le et dis-le (« Je prépare ce dossier pour le projet Atlas. »). Plusieurs :
+   demande lequel, en montrant les projets par leur `nom` (même outil qu'au point 4). Le nom court ne sert
+   qu'au fichier.
+8. L'adresse de la plateforme est `https://app.oovrage.fr`. Ne la demande pas.
+9. Écris le fichier **avec l'outil `Write`**, et rien d'autre, avec l'`organisation` et le `projet` choisis :
 
    ```json
-   { "plateforme": "https://app.oovrage.fr", "projet": "atlas" }
+   { "plateforme": "https://app.oovrage.fr", "organisation": "fjord", "projet": "atlas" }
    ```
 
-7. Enchaîne sur le point 4, sans demander de relancer.
+10. Enchaîne sur le point 4, sans demander de relancer.
 
 ## 4. Le fichier existe : démarrer la conversation
 

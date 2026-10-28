@@ -30,6 +30,18 @@ cas "JSON cassé" '{"projet":"atl' '{}'
 cas "deux champs projet" '{"projet":"atlas","projet":"bistro"}' '{}'
 cas "guillemet injecté" '{"projet":"atlas\",\"X":"y"}' '{}'
 
+# Organisation : émise si le champ est valide, sans effet sur l'en-tête projet sinon.
+cas "avec organisation" '{"plateforme":"https://plateforme.example","organisation":"fjord","projet":"atlas"}' '{"X-Oovrage-Projet":"atlas","X-Oovrage-Organisation":"fjord"}'
+cas "organisation sur plusieurs lignes" '{
+  "organisation" : "ember-2",
+  "projet"  :   "atlas"
+}' '{"X-Oovrage-Projet":"atlas","X-Oovrage-Organisation":"ember-2"}'
+cas "organisation invalide ignorée" '{"organisation":"../fjord","projet":"atlas"}' '{"X-Oovrage-Projet":"atlas"}'
+cas "organisation en majuscule ignorée" '{"organisation":"Fjord","projet":"atlas"}' '{"X-Oovrage-Projet":"atlas"}'
+cas "organisation vide ignorée" '{"organisation":"","projet":"atlas"}' '{"X-Oovrage-Projet":"atlas"}'
+cas "deux champs organisation ignorés" '{"organisation":"fjord","organisation":"ember","projet":"atlas"}' '{"X-Oovrage-Projet":"atlas"}'
+cas "organisation sans projet" '{"organisation":"fjord"}' '{}'
+
 # Sans argument : le dossier courant.
 d="$(mktemp -d)"
 printf '%s' '{"projet":"bistro"}' > "$d/.oovrage-client.json"

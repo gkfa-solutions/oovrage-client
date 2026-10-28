@@ -18,7 +18,7 @@ Dans Claude Code :
    demande de taper `/mcp`, de choisir `plugin:oovrage-client:correspondant` et de le connecter : la
    connexion se fait dans le navigateur, avec votre adresse e-mail (lien de connexion). Relancez ensuite
    `/oovrage-client:correspondant`.
-3. Claude vous propose les projets auxquels vous avez accès. Choisissez le vôtre : il crée le fichier
+3. Claude vous propose votre organisation (s'il y en a plusieurs), puis les projets auxquels vous avez accès. Choisissez le vôtre : il crée le fichier
    `.oovrage-client.json` et la conversation démarre sur votre projet.
 
 Le dossier doit être réservé au projet. Si vous lancez le plugin dans un dossier général de l'ordinateur
@@ -37,7 +37,7 @@ La connexion vaut pour tous vos projets : dans un autre dossier, seul le nom du 
 ## Ce que le plugin n'écrit jamais
 
 Le plugin ne crée qu'un seul fichier, `.oovrage-client.json`, dans le dossier du projet. Il contient
-l'adresse de la plateforme et le nom du projet, jamais de jeton : la connexion est gardée par Claude Code.
+l'adresse de la plateforme, votre organisation et le nom du projet, jamais de jeton : la connexion est gardée par Claude Code.
 
 Dans un dossier qui contient ce fichier, un garde-fou bloque toute autre écriture et toute commande shell.
 Ailleurs, il ne fait rien.
