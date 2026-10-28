@@ -1,7 +1,8 @@
 #!/bin/bash
 # En-tête du connecteur MCP du plugin : imprime `{"X-Oovrage-Projet":"<slug>"}`
-# si `<dossier>/.oovrage-client.json` existe et que son champ `projet` est un
-# slug valide ; sinon `{}` (le connecteur part sans projet : la plateforme
+# (plus `"X-Oovrage-Organisation":"<id>"` si le champ `organisation` est un slug
+# valide) si `<dossier>/.oovrage-client.json` existe et que son champ `projet`
+# est un slug valide ; sinon `{}` (le connecteur part sans projet : la plateforme
 # répond `projet_absent`, jamais un en-tête invalide). Toujours code 0.
 #
 # Appelé par Claude Code (`headersHelper` de `.mcp.json`) avec le dossier de la
@@ -40,4 +41,11 @@ valeurs="$(printf '%s' "$nu" | grep -o '"projet"[[:space:]]*:[[:space:]]*"[^"]*"
 [ "$(printf '%s\n' "$valeurs" | grep -c .)" -eq 1 ] || vide
 [[ "$valeurs" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]] || vide
 
-printf '{"X-Oovrage-Projet":"%s"}\n' "$valeurs"
+# Le champ `organisation`, même règle, facultatif : absent, en double ou invalide,
+# il est simplement omis (l'en-tête du projet part quand même).
+organisations="$(printf '%s' "$nu" | grep -o '"organisation"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*:[[:space:]]*"\([^"]*\)"$/\1/')"
+if [ "$(printf '%s\n' "$organisations" | grep -c .)" -eq 1 ] && [[ "$organisations" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]]; then
+  printf '{"X-Oovrage-Projet":"%s","X-Oovrage-Organisation":"%s"}\n' "$valeurs" "$organisations"
+else
+  printf '{"X-Oovrage-Projet":"%s"}\n' "$valeurs"
+fi

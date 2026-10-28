@@ -15,6 +15,7 @@ for mot in ".oovrage-client.json" "accueil" "l'argument \`projet\`" "/mcp" "Writ
   "Juge le dossier" ".claude/settings.local.json" ".DS_Store" "n'en parle pas et continue" \
   "show_widget" "reprendre" "À faire pour vous" "Depuis votre dernière visite" "Le projet" "sendPrompt" \
   "livraisons_recentes" "lien_plateforme" \
+  "mes_organisations" "\"organisation\"" "Ne demande jamais l'organisation deux fois" \
   "mes_projets" "Ne demande jamais le nom court" "phrase complète" "jamais une lettre seule" \
   "Enchaîner" "Ne demande pas « Voulez-vous continuer ? »"; do
   if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "skill mentionne $mot"; else ko "skill mentionne $mot"; fi
