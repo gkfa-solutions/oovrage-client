@@ -38,10 +38,10 @@ que ces fichiers-là, est le bon dossier.
    dossier ressemble à un projet en cours. Je ne travaille pas dedans, pour ne rien y toucher. » Puis fais
    comme au point 2.3, avec un nouveau dossier `<projet>-oovrage` à côté de celui-ci (dans le même
    dossier parent).
-3. **Proposer le bon dossier** : demande le nom court du projet (comme au point 3.1), puis propose le
-   nouveau dossier par son chemin complet. Si ce dossier existe déjà et n'est pas vide, propose-en un
-   autre. Avec l'accord de la personne, écris `.oovrage-client.json` **dans ce nouveau dossier** avec
-   l'outil `Write` (le dossier est créé avec), et dis : « Quittez cette session, puis relancez Claude
+3. **Proposer le bon dossier** : fais choisir le projet (points 3.1 à 3.4), puis propose le nouveau
+   dossier par son chemin complet, nommé avec le nom court du projet choisi. Si ce dossier existe déjà
+   et n'est pas vide, propose-en un autre. Avec l'accord de la personne, écris `.oovrage-client.json`
+   **dans ce nouveau dossier** avec l'outil `Write` (le dossier est créé avec), et dis : « Quittez cette session, puis relancez Claude
    Code dans le dossier `<chemin complet>` (dans un terminal : `cd "<chemin complet>"` puis `claude`), et
    tapez `/oovrage-client:correspondant`. » Arrête-toi là : n'écris rien dans le dossier courant.
 4. Dans le doute, demande à la personne si ce dossier est bien réservé à ce projet, et crois sa réponse.
@@ -50,20 +50,28 @@ que ces fichiers-là, est le bon dossier.
    nouveau dossier du point 2.3, d'y déplacer `.oovrage-client.json`, puis d'y relancer Claude Code et
    `/oovrage-client:correspondant`. Arrête-toi là.
 
-## 3. Le fichier n'existe pas : le créer
+## 3. Le fichier n'existe pas : choisir le projet et créer le fichier
 
-1. Demande le nom court du projet (par exemple `atlas`). C'est le pilote du projet qui le donne.
-   N'accepte que des minuscules, des chiffres et des tirets.
-2. L'adresse de la plateforme est `https://app.oovrage.fr`. Ne la demande pas.
-3. Écris le fichier **avec l'outil `Write`**, et rien d'autre :
+Ne demande jamais le nom court du projet : la personne choisit parmi les projets auxquels elle a accès.
+
+1. Appelle l'outil `mes_projets` du serveur MCP `oovrage-client`, sans argument. Il rend `projets` :
+   pour chacun, `projet` (le nom court) et `nom`.
+2. Si l'appel échoue faute de connexion, dis : « Tapez `/mcp`, choisissez
+   `plugin:oovrage-client:correspondant` et connectez-le (la connexion se fait dans le navigateur). Puis
+   relancez `/oovrage-client:correspondant`. » Arrête-toi là.
+3. Si `projets` est vide, dis : « Votre compte n'a accès à aucun projet suivi par un Correspondant.
+   Demandez à l'équipe de vous ajouter au projet. » Arrête-toi là.
+4. Un seul projet : prends-le et dis-le (« Je prépare ce dossier pour le projet Atlas. »). Plusieurs :
+   demande lequel, en montrant les projets par leur `nom` (outil `AskUserQuestion` s'il est dans ta
+   liste, sinon une liste numérotée). Le nom court ne sert qu'au fichier.
+5. L'adresse de la plateforme est `https://app.oovrage.fr`. Ne la demande pas.
+6. Écris le fichier **avec l'outil `Write`**, et rien d'autre, avec le `projet` choisi :
 
    ```json
    { "plateforme": "https://app.oovrage.fr", "projet": "atlas" }
    ```
 
-4. Dis : « Tapez `/mcp`, choisissez `plugin:oovrage-client:correspondant` et reconnectez-le (la première
-   fois, la connexion se fait dans le navigateur). Puis relancez `/oovrage-client:correspondant`. »
-5. Arrête-toi là.
+7. Enchaîne sur le point 4, sans demander de relancer.
 
 ## 4. Le fichier existe : démarrer la conversation
 
@@ -71,11 +79,11 @@ que ces fichiers-là, est le bon dossier.
    serveur, passe l'argument `projet` : la valeur du champ `projet` de `.oovrage-client.json`.
 2. Poursuis la conversation à partir de sa réponse : c'est lui qui dit quoi faire et comment. Ton
    premier message montre le visuel d'accueil du point 6.
-3. Si l'appel échoue faute de connexion : donne la consigne `/mcp` du point 3.4.
+3. Si l'appel échoue faute de connexion : donne la consigne `/mcp` du point 3.2.
 4. S'il répond `projet_absent` : tu as oublié l'argument `projet` ; refais l'appel avec. Ne touche pas
    au fichier (l'adresse `plateforme` qu'il contient n'est jamais lue).
-5. S'il répond `projet_refuse` : dis que ce compte n'a pas accès à ce projet, et de vérifier le nom du
-   projet avec le pilote.
+5. S'il répond `projet_refuse` : dis que ce compte n'a plus accès à ce projet, et appelle `mes_projets`
+   pour montrer ceux auxquels il a accès. Ne réécris pas le fichier sans l'accord de la personne.
 6. Dans `ce_qui_t_attend.propositions_a_valider` d'`accueil` (et dans `questions_en_attente`), une spec
    qui porte `questions` pose ce nombre de questions à la personne. Annonce-le avec la spec : « La spec
    … est à valider et vous pose 2 questions. »
@@ -129,6 +137,30 @@ propositions à valider. »). Sous le visuel, une seule question : « Par quoi v
 
 Montre ce visuel à l'arrivée seulement, ou quand la personne demande où en est son projet ; le reste de la
 conversation est en texte.
+
+## 7. Les choix proposés
+
+Chaque fois que tu proposes des choix à la personne (« (a) … (b) … (c) … », valider ou non, répondre à une
+question, jouer un cas), écris chaque choix comme une phrase complète qu'elle pourrait taper, qui nomme le
+geste et l'élément en toutes lettres : « Je valide la proposition « Remettre un e-mail à traiter ». »,
+jamais une lettre seule.
+
+Dans l'application de bureau, montre aussi ces choix avec `show_widget` (règles de rendu du point 6) : un
+bouton par choix, `onclick="sendPrompt('<la phrase complète>')"`. Le clic envoie la phrase tout de suite,
+comme si la personne l'avait tapée : c'est elle qui demande le geste, en toutes lettres. Sans
+`show_widget`, la liste de phrases suffit.
+
+Si la personne répond quand même par une lettre ou un numéro, c'est le choix correspondant : fais-le. Si
+l'outil est alors refusé, ne fais pas de long message : remontre seulement le bouton de ce choix
+(« Cliquez pour confirmer »).
+
+## 8. Enchaîner
+
+Un élément traité (proposition validée ou commentée, question répondue, cahier joué, tâche rendue, dépôt
+complété), rappelle `questions_en_attente` et passe tout de suite au suivant de ce qui attend la personne,
+avec ses choix (point 7). Ne demande pas « Voulez-vous continuer ? ». Plus rien : dis-le en une phrase
+(« Tout est à jour, rien d'autre ne vous attend. »). Si la personne veut s'arrêter ou parler d'autre chose,
+suis-la.
 
 ## Règles
 
