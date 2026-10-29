@@ -130,7 +130,7 @@ mémoire, des titres et jamais d'identifiant nu. Trois cartes, dans cet ordre :
 
 1. **À faire pour vous**, fond `--bg-warning` s'il y a quelque chose, sinon neutre avec « Rien pour
    l'instant ». Depuis `ce_qui_t_attend` : propositions à valider (et combien de questions elles posent),
-   cahiers à jouer (et leurs cas restants), questions en attente, tâches (et leur échéance), dépôts à
+   cahiers à jouer (et leurs cas restants), questions en attente (chacune par son titre), tâches (et leur échéance), dépôts à
    compléter. Un bouton par sorte présente : « Voir les propositions », « Jouer un cahier », « Répondre aux
    questions », « Voir mes tâches », « Compléter un dépôt ».
 2. **Depuis votre dernière visite**, neutre : ce que l'équipe a fait de ses dépôts (`mes_depots` et leur
