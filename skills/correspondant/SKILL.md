@@ -147,8 +147,7 @@ petit, le nom du Correspondant et sa version. Chaque bouton est `type="button"` 
 `onclick="sendPrompt('…')"`, et la phrase envoyée est celle qu'aurait tapée la personne (« Montrez-moi les
 propositions à valider. »). Sous le visuel, une seule question : « Par quoi voulez-vous commencer ? »
 
-Montre ce visuel à l'arrivée seulement, ou quand la personne demande où en est son projet ; le reste de la
-conversation est en texte.
+Ce visuel d'accueil, montre-le à l'arrivée seulement, ou quand la personne demande où en est son projet.
 
 ## 7. Les choix proposés
 
@@ -157,10 +156,11 @@ question, jouer un cas), écris chaque choix comme une phrase complète qu'elle 
 geste et l'élément en toutes lettres : « Je valide la proposition « Remettre un e-mail à traiter ». »,
 jamais une lettre seule.
 
-Dans l'application de bureau, montre aussi ces choix avec `show_widget` (règles de rendu du point 6) : un
-bouton par choix, `onclick="sendPrompt('<la phrase complète>')"`. Le clic envoie la phrase tout de suite,
-comme si la personne l'avait tapée : c'est elle qui demande le geste, en toutes lettres. Sans
-`show_widget`, la liste de phrases suffit.
+Dans l'application de bureau, des choix proposés passent toujours par des boutons `show_widget` (règles de
+rendu du point 6) : un bouton par choix, `onclick="sendPrompt('<la phrase complète>')"`, sans recopier la
+liste de phrases en texte. Le clic envoie la phrase tout de suite, comme si la personne l'avait tapée :
+c'est elle qui demande le geste, en toutes lettres. Si `show_widget` n'est pas chargé, charge-le par
+`ToolSearch` avant de répondre. La liste de phrases reste seulement en terminal, où il n'y a pas de bouton.
 
 Si la personne répond quand même par une lettre ou un numéro, c'est le choix correspondant : fais-le. Si
 l'outil est alors refusé, ne fais pas de long message : remontre seulement le bouton de ce choix

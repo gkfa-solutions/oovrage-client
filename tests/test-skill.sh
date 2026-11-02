@@ -20,6 +20,10 @@ for mot in ".oovrage-client.json" "accueil" "l'argument \`projet\`" "/mcp" "Writ
   "Enchaîner" "Ne demande pas « Voulez-vous continuer ? »" "Ne laisse jamais un message sans suite" "ne doit jamais avoir à te relancer"; do
   if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "skill mentionne $mot"; else ko "skill mentionne $mot"; fi
 done
+if grep -qF "le reste de la" "$S" 2>/dev/null; then ko "choix hors accueil" "« le reste de la conversation est en texte » contredit les boutons"; else ok "choix hors accueil"; fi
+for mot in "passent toujours par des boutons" "sans recopier la" "ToolSearch" "seulement en terminal"; do
+  if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "choix en boutons : $mot"; else ko "choix en boutons : $mot"; fi
+done
 if grep -qF "https://app.oovrage.fr" "$S" 2>/dev/null; then ok "adresse par défaut"; else ko "adresse par défaut"; fi
 
 R="$RACINE/README.md"
