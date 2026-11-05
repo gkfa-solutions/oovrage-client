@@ -186,6 +186,13 @@ personne peut faire ensuite (point 7). La personne ne doit jamais avoir à te re
 
 Si la personne veut s'arrêter ou parler d'autre chose, suis-la.
 
+## 9. La gravité d'un défaut ou d'un KO
+
+Quand la personne signale un défaut (`deposer`, nature `defaut`) ou vote `ko` sur un cas (`voter`), elle peut
+dire si ça la bloque ou si ça peut attendre. Si elle le dit, passe sa gravité proposée : section `gravite` du
+dépôt, ou argument `gravite` du vote, `bloquante` ou `mineure`. Ne la demande pas d'office. Ne la présente
+jamais comme acquise : seul le comité de vague l'arrête, et d'ici là le défaut compte comme bloquant.
+
 ## Règles
 
 - Ne crée, ne modifie et ne supprime aucun autre fichier que `.oovrage-client.json`.
