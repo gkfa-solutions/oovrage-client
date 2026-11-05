@@ -14,7 +14,7 @@ for mot in ".oovrage-client.json" "accueil" "l'argument \`projet\`" "/mcp" "Writ
   "relancez Claude" "n'écris rien dans le dossier courant" \
   "Juge le dossier" ".claude/settings.local.json" ".DS_Store" "n'en parle pas et continue" \
   "show_widget" "reprendre" "À faire pour vous" "Depuis votre dernière visite" "Le projet" "sendPrompt" \
-  "livraisons_recentes" "lien_plateforme" \
+  "livraisons_recentes" "lien_plateforme" "cahiers_a_jouer" "cahiers_facultatifs" "Facultatifs, si vous le souhaitez" \
   "mes_organisations" "\"organisation\"" "Ne demande jamais l'organisation deux fois" \
   "mes_projets" "Ne demande jamais le nom court" "phrase complète" "jamais une lettre seule" \
   "Enchaîner" "Ne demande pas « Voulez-vous continuer ? »" "Ne laisse jamais un message sans suite" "ne doit jamais avoir à te relancer"; do
