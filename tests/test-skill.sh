@@ -17,7 +17,7 @@ for mot in ".oovrage-client.json" "accueil" "l'argument \`projet\`" "/mcp" "Writ
   "livraisons_recentes" "lien_plateforme" "cahiers_a_jouer" "cahiers_facultatifs" "Facultatifs, si vous le souhaitez" \
   "mes_organisations" "\"organisation\"" "Ne demande jamais l'organisation deux fois" \
   "mes_projets" "Ne demande jamais le nom court" "phrase complète" "jamais une lettre seule" \
-  "gravite" "seul le comité de vague l'arrête" "Ne la demande pas d'office" "Enchaîner" "Ne demande pas « Voulez-vous continuer ? »" "Ne laisse jamais un message sans suite" "ne doit jamais avoir à te relancer"; do
+  "gravite" "seul le comité de vague l'arrête" "Ne la demande pas d'office" "changer_priorite" "\`priorite\`" "sans_priorite" "urgents" "dis-le d'office dès le premier message" "Ce n'est pas la gravité" "Enchaîner" "Ne demande pas « Voulez-vous continuer ? »" "Ne laisse jamais un message sans suite" "ne doit jamais avoir à te relancer"; do
   if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "skill mentionne $mot"; else ko "skill mentionne $mot"; fi
 done
 if grep -qF "le reste de la" "$S" 2>/dev/null; then ko "choix hors accueil" "« le reste de la conversation est en texte » contredit les boutons"; else ok "choix hors accueil"; fi
