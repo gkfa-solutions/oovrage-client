@@ -201,7 +201,8 @@ défaut (point 9).
 
 1. Au dépôt (`deposer`), si la personne dit à quel point c'est pressé, passe l'argument `priorite` (`urgent`,
    `haute`, `normale`, `faible` ou `sans_priorite`). Ne la demande pas d'office : sans elle, la demande part
-   « Sans priorité ».
+   « Sans priorité ». C'est la seule mesure de ce qui presse : pas de champ « urgence » à côté. Dans le
+   récapitulatif avant l'envoi, montre-la une fois, sur une ligne « Priorité », et n'explique rien d'autre.
 2. Pour changer la priorité d'une demande qu'elle voit, à sa demande, utilise `changer_priorite` (arguments
    `depot`, la référence `BES-n`, `DEF-n` ou `CAN-n`, et `priorite`), après son accord, comme tout geste. Si
    l'outil n'est pas proposé, donne-lui le lien de la plateforme, où elle peut la changer sur la page de la
