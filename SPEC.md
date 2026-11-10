@@ -107,6 +107,17 @@ Aucun jeton dedans : la connexion est gardée par Claude Code dans son propre st
 La porte du corpus, les portées (dont `code`), les gestes, le journal et l'accord avant écriture restent
 ceux d'aujourd'hui : rien ne change dans les droits.
 
+4. **Statuts en libellés (2026-11-10)** : le Correspondant rend des libellés et non des clés.
+   `accueil.urgents[].statut` est le statut affiché (l'étape du bloc prime), `urgents[].sujet.statut` le
+   libellé de l'étape ; dans `mes_depots[]` (`accueil`, `reprendre`), `statut` est le statut affiché et
+   `motif` remplace `releve` ; `lire` d'un ticket rend `statut` et `motif`, `lire` d'un bloc un `statut`
+   libellé, `etiquettes` et `raison_abandon` ; `chercher` rend des libellés ; `etat` rend `blocs[].etape`,
+   `etiquettes` et `raison_abandon`, et `urgents[].statut`. Le skill les montre tels quels.
+5. **Validation par les seuls rôles désignés (2026-11-10)** : `valider` refuse une spec ou des maquettes
+   à un client ou une MOA dont le rôle n'est pas désigné (`role_non_designe`) ; le skill l'explique et
+   propose `commenter`, sans réessayer. `propositions_a_valider` ne liste que ce qui attend encore la
+   personne.
+
 ## Compatibilité avec le plugin `oovrage`
 
 - Plugin à part, sans dépendance au plugin `oovrage` ; son code vit dans ce dépôt (`oovrage-client`). Pour la marketplace : soit
