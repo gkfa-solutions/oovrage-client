@@ -1,0 +1,16 @@
+name: tests
+
+on:
+  pull_request:
+  push:
+    branches: [develop, main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PowerShell présent
+        run: pwsh -NoProfile -Command '$PSVersionTable.PSVersion'
+      - name: Tests du plugin
+        run: bash tests/run.sh
