@@ -1,17 +1,19 @@
 #!/bin/bash
 # Garde-fou du plugin client (hook PreToolUse sur Write, Edit, MultiEdit,
-# NotebookEdit et Bash).
+# NotebookEdit, Bash et PowerShell). Même règles que `garde-fou.ps1`, son
+# jumeau pour Windows sans bash.
 #
 # N'agit QUE dans un dossier client, c'est-à-dire un dossier qui contient
 # `.oovrage-client.json` ($CLAUDE_PROJECT_DIR, sinon le `cwd` du hook) :
 # ailleurs (session du pilote, autre projet), il sort en 0 sans rien dire.
 # Dans un dossier client, seul ce fichier, par un chemin absolu, peut
-# être écrit (Write, Edit, MultiEdit) ; tout le reste est bloqué (code 2),
-# y compris tout le shell (reconnaître sûrement une commande qui écrit est
-# impossible, et le client n'en a pas besoin) et un appel illisible.
+# être écrit (Write, Edit, MultiEdit), et une seule commande passe : l'envoi
+# à Oovrage d'un fichier par `curl`, selon le gabarit exact du skill, vers
+# `https://app.oovrage.fr/api/envois/<jeton>`. Tout le reste est bloqué
+# (code 2), y compris un appel illisible.
 # Bash pur : ni jq, ni node, ni python chez le client.
 
-MESSAGE="Dossier client Oovrage : seul .oovrage-client.json peut être écrit ici. Le Correspondant agit par ses outils, pas par des fichiers."
+MESSAGE="Dossier client Oovrage : seul .oovrage-client.json peut être écrit ici, et la seule commande admise est l'envoi d'un fichier à Oovrage. Le Correspondant agit par ses outils, pas par des fichiers."
 
 entree="$(tr -d '\n\r')"
 
@@ -39,7 +41,69 @@ bloque() {
   exit 2
 }
 
-case "$(champ tool_name)" in
+ADRESSE="https://app.oovrage.fr/api/envois/"
+
+# chemin_envoyable <chemin> : chemin absolu (`/…`, `C:/…` ou `C:\…`), sans
+# caractère qui sorte des apostrophes ou que curl lise comme une option
+# (`'`, `"`, `;`, `,`, `$`, guillemet inverse, `|`, `&`, `<`, `>`, `%`), sans
+# segment qui commence par un point (fichier ou dossier caché, `..`), hors des
+# emplacements sensibles (clés, profils de navigateur, réglages du système).
+chemin_envoyable() {
+  local c bas seg
+  c="$(chemin "$1")"
+  case "$c" in
+    /* | [A-Za-z]:/*) ;;
+    *) return 1 ;;
+  esac
+  case "$c" in
+    *[\'\"\;,\$\`\|\&\<\>%]* | *[[:cntrl:]]*) return 1 ;;
+  esac
+  bas="$(printf '%s' "$c" | tr '[:upper:]' '[:lower:]')"
+  bas="${bas#[a-z]:}"
+  # Dossiers du système, en tête du chemin.
+  case "${bas#/}" in
+    etc | etc/* | private/* | proc/* | sys/* | dev/* | boot/* | root/* | var/* | usr/* | bin/* | sbin/* \
+      | opt/* | system/* | windows/* | programdata/* | "program files"/* | "program files (x86)"/*) return 1 ;;
+  esac
+  IFS='/' read -r -a segments <<< "$bas"
+  for seg in "${segments[@]}"; do
+    case "$seg" in
+      # Fichier ou dossier caché, `..` compris (dont `.ssh`, `.gnupg`, `.config`).
+      .*) return 1 ;;
+      # Réglages et profils (navigateurs, trousseaux) : `~/Library`, `AppData`.
+      library | appdata | "application data" | keychains) return 1 ;;
+      # Clés et coffres.
+      *.pem | *.key | *.p12 | *.pfx | *.kdbx | *.keychain | *.keychain-db | *.gpg \
+        | id_rsa* | id_dsa* | id_ecdsa* | id_ed25519*) return 1 ;;
+    esac
+  done
+  return 0
+}
+
+# envoi <outil> <commande> : la commande est exactement le gabarit d'envoi de cet
+# outil (Bash : `curl … /dev/null`, PowerShell : `curl.exe … NUL`).
+envoi() {
+  local nul prefixe re fin chemin_f jeton
+  case "$1" in
+    Bash) prefixe="curl" nul="/dev/null" ;;
+    PowerShell) prefixe="curl.exe" nul="NUL" ;;
+    *) return 1 ;;
+  esac
+  re="^$prefixe -sS -o $nul -w '%\{http_code\}' -F 'fichier=@([^']+)' '([^']+)'\$"
+  [[ "$2" =~ $re ]] || return 1
+  chemin_f="${BASH_REMATCH[1]}"
+  fin="${BASH_REMATCH[2]}"
+  [ "${fin#"$ADRESSE"}" != "$fin" ] || return 1
+  jeton="${fin#"$ADRESSE"}"
+  [ "${#jeton}" -ge 20 ] && [ "${#jeton}" -le 400 ] || return 1
+  case "$jeton" in
+    *[!A-Za-z0-9_-]*) return 1 ;;
+  esac
+  chemin_envoyable "$chemin_f"
+}
+
+outil="$(champ tool_name)"
+case "$outil" in
   Write | Edit | MultiEdit)
     # Chemin absolu (`/…` ou `C:/…`), nommé `.oovrage-client.json`, dans le
     # dossier client lui-même : `-ef` compare les dossiers sur le disque, ce qui
@@ -52,6 +116,10 @@ case "$(champ tool_name)" in
     if [ "${cible##*/}" = ".oovrage-client.json" ]; then
       [ "${cible%/*}" = "$dossier" ] || [ "${cible%/*}" -ef "$dossier" ] && exit 0
     fi
+    bloque
+    ;;
+  Bash | PowerShell)
+    envoi "$outil" "$(champ command)" && exit 0
     bloque
     ;;
   *) bloque ;;
