@@ -43,9 +43,36 @@ travaille dans un dossier par projet ; un fichier de config dans ce dossier dit 
     l'accord de la personne, comme tout geste), et dit que valider sans répondre accepte nos
     recommandations. Une réponse qui s'écarte de la recommandation fait réécrire la spec, republiée à
     valider.
+  - **Trancher ou commenter (2026-11-19)** : sous chaque question (spec, proposition de vague, décision
+    DEC-n), une réponse est retenue, proposée ou défaite. `lire` rend pour chaque question `reponse`
+    (`texte`, `par`, `auteur`, `etat` : `retenue` ou `proposee` ; `null` si rien), `reponses_proposees[]`
+    et `reponses_defaites[]` ; une DEC-n a une seule question, sans `numero`. `commenter` avec `question`
+    et `repondre_question` rendent `etat` : le skill dit « retenue » (la personne a le droit de trancher),
+    « proposée, en attente de <qui a le droit> » ou « défaite ». Un commentaire n'est pas une réponse : un
+    `commenter` sur une DEC-n n'y répond pas (`repondre_question`, ou `voter` avec `option_id`, qui dépose
+    aussi la réponse). `defaire_reponse` (`cible`, `question` pour une spec ou une proposition, `raison`
+    facultative) n'est proposé qu'à qui a le droit de trancher, après son accord. Valider accepte les
+    recommandations des questions sans réponse mais attend qu'aucune réponse proposée ne reste ; sous une
+    spec validée plus rien ne se change (demander au pilote). Erreurs expliquées : `reponse_en_attente`,
+    `question_sans_reponse` (`valider`), `question_close` (`commenter`, `repondre_question`,
+    `defaire_reponse`), `defaire_refuse` (`defaire_reponse`).
 - Le plugin embarque son connecteur MCP (déclaré dans le plugin, pas à ajouter à la main).
 - Interdiction de créer, modifier ou supprimer tout autre fichier : un garde-fou (hook `PreToolUse` sur
-  Write / Edit / NotebookEdit et sur les commandes shell qui écrivent) bloque tout le reste.
+  Write / Edit / MultiEdit / NotebookEdit / Bash / PowerShell) bloque tout le reste. Deux scripts aux
+  mêmes règles : `hooks/garde-fou` (bash) et `hooks/garde-fou.ps1` (PowerShell 5.1, pour Windows sans
+  bash), déclarés tous deux dans `hooks/hooks.json` (bash en forme « shell » avec `onFailure: continue`,
+  PowerShell par `powershell.exe -File`).
+  - **Un seul envoi, vers Oovrage (2026-11-19)** : la seule commande admise est l'envoi d'un fichier que la
+    personne désigne, au gabarit exact
+    `curl -sS -o /dev/null -w '%{http_code}' -F 'fichier=@<chemin absolu>' '<adresse>'` (outil Bash) ou
+    `curl.exe -sS -o NUL -w '%{http_code}' -F 'fichier=@<chemin absolu>' '<adresse>'` (outil PowerShell),
+    l'adresse étant `https://app.oovrage.fr/api/envois/<jeton>` (jeton de 20 à 400 caractères
+    `[A-Za-z0-9_-]`), rendue par l'outil `preparer_envoi` (`cible`, `nom`, `texte` →
+    `{ adresse, limite, expire_le }`, 4 Mo, usage unique). Chemin absolu, sans apostrophe, guillemet, `;`,
+    `,`, `$`, guillemet inverse, `|`, `&`, `<`, `>`, `%` ni retour à la ligne, sans segment qui commence par
+    un point, hors emplacements sensibles (clés, profils de navigateur, réglages du système). La route
+    `POST /api/envois/<jeton>` (formulaire `fichier`) répond 201, sinon 400, 403, 404, 410, 413 ou 503 sans
+    corps : le skill donne alors le lien de la page (jusqu'à 1 Go ; au-delà, directement au builder).
   - **Le garde-fou n'agit que dans un dossier qui contient le fichier de config.** Ailleurs, il ne fait
     rien : le propriétaire a aussi le plugin `oovrage` (pilote) et ne doit jamais être bloqué dans son
     travail de pilote.
@@ -90,8 +117,8 @@ Aucun jeton dedans : la connexion est gardée par Claude Code dans son propre st
      `/mcp` dans l'application de bureau : « points at a different server URL ») ; un appel d'outil sans
      argument `projet` ni en-tête reçoit l'erreur d'outil `projet_absent` ; projet inconnu ou dont la personne n'est pas membre : `403 projet_refuse`
      (même message) ; portée OAuth `correspondant`, ressource `<origine>/mcp` ; dans un dossier client,
-     **toute** commande shell est bloquée (reconnaître sûrement une commande qui écrit est impossible, et
-     le client n'en a pas besoin).
+     toute commande shell est bloquée (reconnaître sûrement une commande qui écrit est impossible), sauf
+     un seul envoi, vers Oovrage (voir plus haut).
    - **Organisations (2026-10-28)** : outil `mes_organisations` (sans argument) → `{ organisations: [{
      organisation, nom }] }` ; `mes_projets` accepte l'argument facultatif `organisation` (à défaut,
      l'en-tête facultatif `X-Oovrage-Organisation`) ; sans l'un ni l'autre, les projets de toutes les
@@ -118,6 +145,20 @@ ceux d'aujourd'hui : rien ne change dans les droits.
    propose `commenter`, sans réessayer. `propositions_a_valider` ne liste que ce qui attend encore la
    personne.
 
+6. **Contrat du 2026-11-19 (Oovrage 1.0.89)** : nom de connexion `plugin:oovrage-client:oovrage-client`
+   dans `/mcp`. Outils nouveaux : `preparer_envoi` (voir le garde-fou), `lire_fichier` (`fichier?`,
+   `page?`, `images?`, `suite?` : lit une pièce ou un document, sans `fichier` liste les documents),
+   `ranger_demande` (`demande`, `action` : `archiver` | `traiter` | `rouvrir` | `partager`, `emails?`),
+   `defaire_reponse` (voir plus haut). Outils changés : `lire` rend `pieces` (commentaires, réponses) et
+   `documents` (demande) ; `mes_preferences` règle aussi `notifications`, le canal personnel de la
+   personne pour tous ses projets (`defaut`, `email`, `discord` ou `aucun` ; le skill lit valeurs et
+   libellés dans la description de l'outil) ; `reunions` rend aussi `passees` et leur `compte_rendu`
+   publié ; `recettes` rend `vagues` (état et plan) ; `deposer` et `completer_depot` ne prennent plus de
+   fichier. `deposer` accepte la nature `idea` (section `idee` obligatoire, `apport` facultative) ; la
+   relève « En attente d'un bloc » (`attente_bloc`) peut paraître dans les dépôts rendus. `lire`,
+   `chercher`, `commenter` et `changer_priorite` portent sur tout dépôt que la personne voit (son sujet, ou
+   tout le projet) ; `completer_depot` reste réservé à ses dépôts.
+
 ## Compatibilité avec le plugin `oovrage`
 
 - Plugin à part, sans dépendance au plugin `oovrage` ; son code vit dans ce dépôt (`oovrage-client`). Pour la marketplace : soit
@@ -133,9 +174,9 @@ ceux d'aujourd'hui : rien ne change dans les droits.
 
 ## Limites connues
 
-- Le client doit avoir Claude Code, ou l'application de bureau en mode Cowork (à vérifier : plugins et
-  connecteur distant y fonctionnent-ils ?). Il perd l'usage depuis claude.ai web et mobile ; le connecteur
-  claude.ai reste disponible pour ceux qui le préfèrent.
+- Le client doit avoir un abonnement Claude payant et Claude Code 2.1.295 ou plus, dans l'application de
+  bureau (onglet Code) ou dans le terminal. Le mode Cowork n'est pas vérifié. Depuis claude.ai web et
+  mobile, il travaille à l'écran de la plateforme, sans Correspondant.
 - Le code lu reste l'instantané publié à la mise en prod (`oovrage code publier`), pas le dépôt.
 
 ## Règles du dépôt

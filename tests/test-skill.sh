@@ -7,7 +7,7 @@ S="$RACINE/skills/correspondant/SKILL.md"
 if [ -f "$S" ]; then ok "skill présent"; else ko "skill présent" "$S absent"; fi
 egal "frontmatter : name" "name: correspondant" "$(sed -n '2,6p' "$S" 2>/dev/null | grep '^name:')"
 if sed -n '2,6p' "$S" 2>/dev/null | grep -q '^description: .'; then ok "description"; else ko "description" "absente"; fi
-for mot in ".oovrage-client.json" "accueil" "l'argument \`projet\`" "/mcp" "Write" "projet_refuse" "plugin:oovrage-client:correspondant" \
+for mot in ".oovrage-client.json" "accueil" "l'argument \`projet\`" "/mcp" "Write" "projet_refuse" "plugin:oovrage-client:oovrage-client" "c'est fait" \
   "propositions_a_valider" "questions_en_attente" "lire" "recommandation" "commenter" "\`question\`" \
   "valider la spec sans répondre, c'est accepter nos recommandations" \
   "Vérifier le dossier" "Glob" "Dossier général" "Projet en cours" "<projet>-oovrage" "oovrage/<projet>" \
@@ -17,8 +17,15 @@ for mot in ".oovrage-client.json" "accueil" "l'argument \`projet\`" "/mcp" "Writ
   "livraisons_recentes" "lien_plateforme" "cahiers_a_jouer" "cahiers_facultatifs" "Facultatifs, si vous le souhaitez" \
   "mes_organisations" "\"organisation\"" "Ne demande jamais l'organisation deux fois" \
   "mes_projets" "Ne demande jamais le nom court" "phrase complète" "jamais une lettre seule" \
-  "gravite" "seul le comité de vague l'arrête" "Ne la demande pas d'office" "C'est la seule mesure de ce qui presse" "changer_priorite" "\`priorite\`" "sans_priorite" "urgents" "dis-le d'office dès le premier message" "Ce n'est pas la gravité" "Enchaîner" "Ne demande pas « Voulez-vous continuer ? »" "Ne laisse jamais un message sans suite" "ne doit jamais avoir à te relancer" "role_non_designe" "Ne réessaie pas de valider" "raison_abandon" "etiquettes" "\`motif\`" "ne liste que ce qui attend encore"; do
+  "gravite" "seul le comité de vague l'arrête" "Ne la demande pas d'office" "C'est la seule mesure de ce qui presse" "changer_priorite" "\`priorite\`" "sans_priorite" "urgents" "dis-le d'office dès le premier message" "Ce n'est pas la gravité" "Enchaîner" "Ne demande pas « Voulez-vous continuer ? »" "Ne laisse jamais un message sans suite" "ne doit jamais avoir à te relancer" "role_non_designe" "Ne réessaie pas de valider" "raison_abandon" "etiquettes" "\`motif\`" "ne liste que ce qui attend encore" \
+  "Trancher ou commenter" "\`retenue\`" "\`proposee\`" "reponses_proposees" "reponses_defaites" "Votre réponse est retenue" "Votre réponse est proposée, en attente de" "Votre réponse est défaite" "Un commentaire n'est pas une réponse" "defaire_reponse" "defaire_refuse" "reponse_en_attente" "question_sans_reponse" "question_close" "repondre_question" "\`option_id\`" \
+  "\`idea\`" "En attente d'un bloc" "jamais les compléter" "ranger_demande" \
+  "Envoyer un fichier" "preparer_envoi" "lire_fichier" "\`pieces\`" "\`documents\`" "\`passees\`" "\`compte_rendu\`" "\`vagues\`" "mes_preferences" "\`notifications\`" "Les valeurs et leurs libellés sont dans la description" \
+  "curl -sS -o /dev/null -w '%{http_code}' -F 'fichier=@<chemin absolu>' '<adresse>'" "curl.exe -sS -o NUL -w '%{http_code}' -F 'fichier=@<chemin absolu>' '<adresse>'" "https://app.oovrage.fr/api/envois/<jeton>" "\`201\`" "jusqu'à 1 Go" "Au-delà d'1 Go" "N'utilise le shell que pour la commande d'envoi"; do
   if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "skill mentionne $mot"; else ko "skill mentionne $mot"; fi
+done
+for vieux in "plugin:oovrage-client:correspondant" "N'utilise jamais le shell" "cahiers_chez_le_testeur" "salon"; do
+  if grep -qF -- "$vieux" "$S" "$RACINE/README.md" "$RACINE/SPEC.md" 2>/dev/null; then ko "plus de $vieux"; else ok "plus de $vieux"; fi
 done
 if grep -qF "le reste de la" "$S" 2>/dev/null; then ko "choix hors accueil" "« le reste de la conversation est en texte » contredit les boutons"; else ok "choix hors accueil"; fi
 for mot in "passent toujours par des boutons" "sans recopier la" "ToolSearch" "seulement en terminal"; do

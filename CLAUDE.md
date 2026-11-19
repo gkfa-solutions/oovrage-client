@@ -17,6 +17,11 @@ Lis d'abord `SPEC.md` : le besoin, les choix déjà faits et l'ordre de travail.
   seulement (atlas, bistro, cobalt, ember, fjord…).
 - Le plugin ne crée **qu'un seul fichier** : `.oovrage-client.json` dans le dossier où le client le lance.
 - Le garde-fou n'agit **que** dans un dossier qui contient `.oovrage-client.json`.
+- Dans ce dossier, le garde-fou n'admet qu'**un seul envoi, vers Oovrage** : la commande `curl` d'envoi au
+  gabarit exact du skill, vers `https://app.oovrage.fr/api/envois/<jeton>`. Il existe en deux scripts aux
+  mêmes règles, `hooks/garde-fou` (bash) et `hooks/garde-fou.ps1` (PowerShell, Windows sans bash) : toute
+  règle changée l'est dans les deux, et chaque cas de `tests/test-garde-fou.sh` est joué sur les deux
+  (`pwsh` requis pour le second ; la CI l'a).
 - **Pas d'estimation de temps.** Critères : valeur, complexité, sûreté.
 - **Vérifier par les tests**, puis par un scénario sur un projet d'essai jetable.
 - **Ne change jamais le numéro de version** (`.claude-plugin/plugin.json`) sans qu'on te le demande.
