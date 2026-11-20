@@ -159,6 +159,13 @@ ceux d'aujourd'hui : rien ne change dans les droits.
    `chercher`, `commenter` et `changer_priorite` portent sur tout dépôt que la personne voit (son sujet, ou
    tout le projet) ; `completer_depot` reste réservé à ses dépôts.
 
+7. **Contrat du 2026-11-20 (Oovrage 1.0.90)** : spec et maquettes liées : `valider` refuse des maquettes
+   liées à la spec de leur bloc (`valider_avec_la_spec`) ; `propositions_a_valider` ne les liste pas, et
+   la spec de leur bloc porte `avec_maquettes: true`. Le skill annonce les deux ensemble et fait valider
+   la spec. Projet sans vagues : en `vagues: off`, `recettes` rend `{ comite: false, vagues: [], recettes:
+   [] }` pour tous et refuse une `vague` nommée ; `propositions_de_vague` est vide dans
+   `questions_en_attente` et `accueil` ; aucun bloc ne porte de vague.
+
 ## Compatibilité avec le plugin `oovrage`
 
 - Plugin à part, sans dépendance au plugin `oovrage` ; son code vit dans ce dépôt (`oovrage-client`). Pour la marketplace : soit
