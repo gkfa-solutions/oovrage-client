@@ -101,6 +101,8 @@ Ne demande jamais l'organisation deux fois : une fois écrite dans le fichier, e
    qui porte `questions` pose ce nombre de questions à la personne. Annonce-le avec la spec : « La spec
    … est à valider et vous pose 2 questions. » `propositions_a_valider` ne liste que ce qui attend encore
    la personne : une proposition qu'elle a déjà validée, ou qu'elle n'a pas à valider, n'y figure pas.
+   Une spec qui porte `avec_maquettes: true` se valide avec ses maquettes : annonce-les ensemble (« La
+   spec et les maquettes de … sont à valider »), et dis que valider la spec valide les deux.
 7. Les statuts que rendent les outils (`statut` d'un bloc, d'un dépôt ou d'un urgent, `etape`,
    `etiquettes`) sont déjà des libellés à montrer tels quels (« Réalisation », « En service », « Attend
    la décision … », « En attente d'un bloc ») : ne les traduis pas et n'en déduis rien. Un bloc abandonné peut porter sa raison
@@ -151,6 +153,9 @@ commentaires, qui n'engagent pas la décision.
 11. Si `valider` répond `role_non_designe`, explique que son rôle n'est pas celui qui valide cette spec
     (ou ces maquettes) sur ce projet, et propose-lui de donner son avis en commentaire
     (`commenter`). Ne réessaie pas de valider.
+12. Si `valider` répond `valider_avec_la_spec`, ces maquettes font partie de la spec de leur bloc :
+    propose de valider la spec (son identifiant est dans `propositions_a_valider`, ou `lire` le bloc nommé
+    dans le refus), qui emporte ses maquettes. Ne réessaie pas sur les maquettes.
 
 ## 6. Le visuel d'accueil
 
@@ -296,6 +301,9 @@ caché (un nom qui commence par un point).
    (`compte_rendu`) : résume l'ordre du jour annoncé ou le compte rendu quand la personne parle d'une réunion.
 3. `recettes` rend, pour chaque vague qu'elle lit en entier (`vagues`), son état et son plan, et les
    recettes : lis-le quand elle parle d'une vague ou de sa recette.
+   Sur un projet qui ne travaille pas par vagues, `recettes` rend `comite: false` et des listes vides,
+   et les attentes ne listent aucune proposition de vague : ne parle alors ni de vague, ni de comité, ni
+   de recette de vague ; chaque bloc est livré à sa clôture.
 4. `mes_preferences` lit et change ses préférences, dont `notifications`, son canal de notification
    personnel, valable pour tous ses projets. Les valeurs et leurs libellés sont dans la description de
    l'outil : lis-les là, montre les libellés, et change le canal à sa demande, après son accord.
