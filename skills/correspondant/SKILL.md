@@ -107,6 +107,10 @@ Ne demande jamais l'organisation deux fois : une fois écrite dans le fichier, e
    `etiquettes`) sont déjà des libellés à montrer tels quels (« Réalisation », « En service », « Attend
    la décision … », « En attente d'un bloc ») : ne les traduis pas et n'en déduis rien. Un bloc abandonné peut porter sa raison
    (`raison_abandon`) : donne-la quand la personne demande pourquoi.
+8. Avant de répondre que tu ne sais pas ou que tu ne trouves rien sur un sujet, lance `chercher` sur
+   les mots de la question et sur leurs synonymes, puis `lire` sur les meilleurs résultats. Ne conclus
+   jamais du seul `etat` : il ne montre que le présent et les changements récents, pas un sujet livré
+   il y a des mois.
 
 ## 5. Trancher ou commenter
 
