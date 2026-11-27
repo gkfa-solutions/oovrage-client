@@ -23,6 +23,24 @@ Dans le terminal, lancez `claude` dans le dossier du projet, puis :
 /plugin install oovrage-client@oovrage-client
 ```
 
+Dès l'installation, activez la mise à jour automatique : tapez `/plugin`, ouvrez l'onglet des marketplaces,
+choisissez `oovrage-client` et activez « Marketplace auto-update ». Le plus souvent, vous n'aurez alors
+rien à faire quand une nouvelle version sort.
+
+## Mettre à jour
+
+Quand une nouvelle version du plugin est publiée, le Correspondant s'arrête et vous donne cette commande :
+
+```
+claude plugin update oovrage-client@oovrage-client
+```
+
+Dans l'application de bureau, cliquez sur « Run » sous la commande ; dans le terminal, tapez `!` suivi de
+la commande. Puis tapez `/reload-plugins` et relancez `/oovrage-client:correspondant`. Si la commande
+échoue : tapez `/plugin`, ouvrez l'onglet des plugins installés et mettez à jour oovrage-client.
+
+Sur claude.ai, le plugin se redépose : demandez la nouvelle archive au builder du projet.
+
 ## Utilisation
 
 1. Créez un dossier par projet (par exemple `atlas`), et lancez Claude Code dedans.
