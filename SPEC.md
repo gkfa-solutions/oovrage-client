@@ -30,15 +30,23 @@ travaille dans un dossier par projet ; un fichier de config dans ce dossier dit 
     est déjà dans un tel dossier, le garde-fou empêche d'écrire ailleurs : le skill demande à la personne
     de déplacer le fichier elle-même.
   - Dossier **avec** fichier de config : le skill lit le projet, appelle `accueil`, et la conversation
-    démarre sur ce projet. Si le fichier n'a pas de champ `organisation` (fichier d'avant les
+    démarre sur ce projet. Si la personne a posé une question en lançant le Correspondant, il y répond
+    d'abord, en court, puis propose en une ligne de voir ce qui l'attend (bouton « Voir ce qui m'attend ») ;
+    sans question, le visuel d'accueil. Si une relance l'arrête avant (nouveau dossier, connexion), il lui
+    demande de reposer sa question après. Si le fichier n'a pas de champ `organisation` (fichier d'avant les
     organisations), le skill appelle d'abord `mes_organisations` : une seule, il la prend sans question ;
     plusieurs, il demande une fois ; puis il réécrit le fichier en gardant `plateforme` et `projet`. Il ne la
     redemande jamais.
   - Fichier absent : organisation d'abord (`mes_organisations`, automatique s'il n'y en a qu'une), puis
     `mes_projets` avec l'argument `organisation`.
+  - **Conduite servie par `accueil` (2026-11-27)** : la conduite et les règles du projet (annonces, réponses
+    aux questions, statuts, priorité, dépôts, suite de chaque message) viennent d'`accueil`. Le skill ne
+    porte que ce qui est propre au dossier et à Claude Code : le dossier, `.oovrage-client.json` et le choix
+    de l'organisation et du projet, la connexion `/mcp`, le démarrage, le rendu `show_widget` du visuel
+    d'accueil et des choix en boutons, la commande d'envoi. Il tutoie la personne.
   - Spec de bloc à valider qui pose des questions (au plus quatre, chacune avec notre recommandation) :
     `accueil` et `questions_en_attente` en donnent le nombre (`propositions_a_valider[].questions`), `lire`
-    les rend (`questions`, `questions_note`). Le skill annonce ce nombre, montre chaque question avec notre
+    les rend (`questions`, `questions_note`). Le Correspondant annonce ce nombre, montre chaque question avec notre
     recommandation, propose d'y répondre une par une par `commenter` avec `question` = son numéro (après
     l'accord de la personne, comme tout geste), et dit que valider sans répondre accepte nos
     recommandations. Une réponse qui s'écarte de la recommandation fait réécrire la spec, republiée à
@@ -47,14 +55,14 @@ travaille dans un dossier par projet ; un fichier de config dans ce dossier dit 
     DEC-n), une réponse est retenue, proposée ou défaite. `lire` rend pour chaque question `reponse`
     (`texte`, `par`, `auteur`, `etat` : `retenue` ou `proposee` ; `null` si rien), `reponses_proposees[]`
     et `reponses_defaites[]` ; une DEC-n a une seule question, sans `numero`. `commenter` avec `question`
-    et `repondre_question` rendent `etat` : le skill dit « retenue » (la personne a le droit de trancher),
+    et `repondre_question` rendent `etat` : le Correspondant dit « retenue » (la personne a le droit de trancher),
     « proposée, en attente de <qui a le droit> » ou « défaite ». Un commentaire n'est pas une réponse : un
     `commenter` sur une DEC-n n'y répond pas (`repondre_question`, ou `voter` avec `option_id`, qui dépose
     aussi la réponse). `defaire_reponse` (`cible`, `question` pour une spec ou une proposition, `raison`
     facultative) n'est proposé qu'à qui a le droit de trancher, après son accord. Valider accepte les
     recommandations des questions sans réponse mais attend qu'aucune réponse proposée ne reste ; sous une
     spec validée plus rien ne se change (demander au pilote). Erreurs expliquées : `reponse_en_attente`,
-    `question_sans_reponse` (`valider`), `question_close` (`commenter`, `repondre_question`,
+    `question_sans_reponse` (`valider`), `spec_en_brouillon` (`valider`), `question_close` (`commenter`, `repondre_question`,
     `defaire_reponse`), `defaire_refuse` (`defaire_reponse`).
 - Le plugin embarque son connecteur MCP (déclaré dans le plugin, pas à ajouter à la main).
 - Interdiction de créer, modifier ou supprimer tout autre fichier : un garde-fou (hook `PreToolUse` sur
@@ -139,9 +147,9 @@ ceux d'aujourd'hui : rien ne change dans les droits.
    libellé de l'étape ; dans `mes_depots[]` (`accueil`, `reprendre`), `statut` est le statut affiché et
    `motif` remplace `releve` ; `lire` d'un ticket rend `statut` et `motif`, `lire` d'un bloc un `statut`
    libellé, `etiquettes` et `raison_abandon` ; `chercher` rend des libellés ; `etat` rend `blocs[].etape`,
-   `etiquettes` et `raison_abandon`, et `urgents[].statut`. Le skill les montre tels quels.
+   `etiquettes` et `raison_abandon`, et `urgents[].statut`. Le Correspondant les montre tels quels.
 5. **Validation par les seuls rôles désignés (2026-11-10)** : `valider` refuse une spec ou des maquettes
-   à un client ou une MOA dont le rôle n'est pas désigné (`role_non_designe`) ; le skill l'explique et
+   à un client ou une MOA dont le rôle n'est pas désigné (`role_non_designe`) ; le Correspondant l'explique et
    propose `commenter`, sans réessayer. `propositions_a_valider` ne liste que ce qui attend encore la
    personne.
 
@@ -151,8 +159,8 @@ ceux d'aujourd'hui : rien ne change dans les droits.
    `ranger_demande` (`demande`, `action` : `archiver` | `traiter` | `rouvrir` | `partager`, `emails?`),
    `defaire_reponse` (voir plus haut). Outils changés : `lire` rend `pieces` (commentaires, réponses) et
    `documents` (demande) ; `mes_preferences` règle aussi `notifications`, le canal personnel de la
-   personne pour tous ses projets (`defaut`, `email`, `discord` ou `aucun` ; le skill lit valeurs et
-   libellés dans la description de l'outil) ; `reunions` rend aussi `passees` et leur `compte_rendu`
+   personne pour tous ses projets (`defaut`, `email`, `discord` ou `aucun` ; le Correspondant lit
+   valeurs et libellés dans la description de l'outil) ; `reunions` rend aussi `passees` et leur `compte_rendu`
    publié ; `recettes` rend `vagues` (état et plan) ; `deposer` et `completer_depot` ne prennent plus de
    fichier. `deposer` accepte la nature `idea` (section `idee` obligatoire, `apport` facultative) ; la
    relève « En attente d'un bloc » (`attente_bloc`) peut paraître dans les dépôts rendus. `lire`,
@@ -161,10 +169,46 @@ ceux d'aujourd'hui : rien ne change dans les droits.
 
 7. **Contrat du 2026-11-20 (Oovrage 1.0.90)** : spec et maquettes liées : `valider` refuse des maquettes
    liées à la spec de leur bloc (`valider_avec_la_spec`) ; `propositions_a_valider` ne les liste pas, et
-   la spec de leur bloc porte `avec_maquettes: true`. Le skill annonce les deux ensemble et fait valider
+   la spec de leur bloc porte `avec_maquettes: true`. Le Correspondant annonce les deux ensemble et fait valider
    la spec. Projet sans vagues : en `vagues: off`, `recettes` rend `{ comite: false, vagues: [], recettes:
    [] }` pour tous et refuse une `vague` nommée ; `propositions_de_vague` est vide dans
    `questions_en_attente` et `accueil` ; aucun bloc ne porte de vague.
+
+8. **Contrat du 2026-11-27 (Oovrage 1.4.0)** : la description de `commenter` ajoute « Un message au projet
+   sans pièce jointe est vu par le pilote à ses moments de lecture ; une demande passe par un dépôt ou une
+   réponse à une question. » Un message sur `__project__` va dans la Discussion du projet ; `commenter` ne
+   connaît ni `repond_a` ni `mentions`, et `lire` ne rend pas la Discussion. Le skill n'en change pas.
+   `compte_rendu_tache` répond `statut: "rendue" | "ouverte" | "traite"` : faite, bloquée ou refusée
+   rendent la tâche, chez le demandeur pour vérification ; « plus tard » la laisse `ouverte` ; `traite`
+   seulement pour un assigné qui peut la clore. Un fichier qui répond à une tâche confiée à la personne se
+   joint à sa `TAC-n` (`preparer_envoi`, `cible`).
+
+9. **Contrat du 2026-11-27 (Oovrage 1.4.0, téléphone)** : `mes_preferences` connaît la valeur `appli` du canal
+   personnel (`notifications.canal` : `defaut`, `email`, `discord`, `appli`, `aucun`) et la refuse toujours
+   (detail `notifications_appli_sur_l_appareil`) : la notification sur les appareils se choisit sur l'appareil,
+   depuis « Mes notifications ». Le skill n'en change pas.
+
+10. **Plugin à jour (Oovrage 1.4.0)** : le skill écrit sa version en toutes lettres (« Version du plugin :
+    x.y.z », égale à `.claude-plugin/plugin.json`, vérifié par `tests/test-skill.sh`) et la passe dans
+    l'argument `version_client` de chaque appel d'outil sur `/mcp`, `mes_organisations` et `mes_projets`
+    compris : elle dit ce que la session a chargé (après `claude plugin update`, l'ancienne version part
+    jusqu'à `/reload-plugins`). La plateforme la compare à la version publiée, lue dans `plugin.json` de la
+    branche par défaut de ce dépôt ; plus ancienne ou absente (0.1.20 et avant) → erreur d'outil
+    `plugin_a_mettre_a_jour`. Le skill s'arrête alors et donne la commande `claude plugin update
+    oovrage-client@oovrage-client` dans un bloc d'une ligne, que la personne lance elle-même (« Run » dans
+    l'application de bureau, `!` dans le terminal : ce n'est pas un appel d'outil, le garde-fou ne s'y
+    applique pas), puis `/reload-plugins` ; sur claude.ai, il demande de redéposer l'archive, fournie par le
+    builder. Le garde-fou ne change pas : la commande reste refusée en appel d'outil. Publier une version (le
+    commit de version sur la branche par défaut) arrête donc tous les plugins plus anciens : il part en
+    dernier, reprise fusionnée et tests verts. Essai manuel à faire : sur un dossier client jetable (avec
+    `.oovrage-client.json`, garde-fou actif), vérifier que « Run » dans l'application de bureau et
+    `!claude plugin update oovrage-client@oovrage-client` dans le terminal passent malgré le garde-fou, et
+    que `/reload-plugins` fait porter la nouvelle version à l'appel suivant. Les deux voies restent dans le
+    skill et le README tant que l'essai n'est pas fait ; une voie bloquée par le hook en sera retirée.
+
+11. **Spec en brouillon lisible (2026-11-27)** : `lire` d'une spec en brouillon rend `brouillon` ; `valider`
+    la refuse `spec_en_brouillon` ; une réponse à ses questions est refusée `question_close` ; `commenter`
+    sans `question` passe. Le skill le dit et propose `commenter`.
 
 ## Compatibilité avec le plugin `oovrage`
 
