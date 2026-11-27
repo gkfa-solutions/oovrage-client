@@ -7,35 +7,51 @@ S="$RACINE/skills/correspondant/SKILL.md"
 if [ -f "$S" ]; then ok "skill présent"; else ko "skill présent" "$S absent"; fi
 egal "frontmatter : name" "name: correspondant" "$(sed -n '2,6p' "$S" 2>/dev/null | grep '^name:')"
 if sed -n '2,6p' "$S" 2>/dev/null | grep -q '^description: .'; then ok "description"; else ko "description" "absente"; fi
-for mot in ".oovrage-client.json" "accueil" "l'argument \`projet\`" "/mcp" "Write" "projet_refuse" "plugin:oovrage-client:oovrage-client" "c'est fait" \
-  "propositions_a_valider" "questions_en_attente" "lire" "recommandation" "commenter" "\`question\`" \
-  "valider la spec sans répondre, c'est accepter nos recommandations" \
+for mot in ".oovrage-client.json" "accueil" "l'argument \`projet\`" "/mcp" "Write" "projet_absent" "projet_refuse" "plugin:oovrage-client:oovrage-client" "c'est fait" \
+  "Tutoie la personne" "Phrases courtes, mots simples" \
   "Vérifier le dossier" "Glob" "Dossier général" "Projet en cours" "<projet>-oovrage" "oovrage/<projet>" \
-  "relancez Claude" "n'écris rien dans le dossier courant" \
+  "relance Claude Code" "n'écris rien dans le dossier courant" \
   "Juge le dossier" ".claude/settings.local.json" ".DS_Store" "n'en parle pas et continue" \
-  "show_widget" "reprendre" "À faire pour vous" "Depuis votre dernière visite" "Le projet" "sendPrompt" \
-  "livraisons_recentes" "lien_plateforme" "cahiers_a_jouer" "cahiers_facultatifs" "Facultatifs, si vous le souhaitez" \
+  "La conduite et les règles du projet viennent d'\`accueil\`" \
+  "La question posée en lançant le Correspondant" "reposer après la" "réponds-y d'abord" "Voir ce qui m'attend" "quand elle demande ce qui l'attend" \
+  "show_widget" "reprendre" "À faire pour toi" "Depuis ta dernière visite" "Le projet" "sendPrompt" \
+  "livraisons_recentes" "lien_plateforme" "cahiers_a_jouer" "cahiers_facultatifs" "Facultatifs, si tu le souhaites" \
+  "urgents" "\`motif\`" "Montre-moi les propositions à valider." "Par quoi veux-tu commencer ?" \
   "mes_organisations" "\"organisation\"" "Ne demande jamais l'organisation deux fois" \
-  "mes_projets" "Ne demande jamais le nom court" "phrase complète" "jamais une lettre seule" \
-  "gravite" "seul le comité de vague l'arrête" "Ne la demande pas d'office" "C'est la seule mesure de ce qui presse" "changer_priorite" "\`priorite\`" "sans_priorite" "urgents" "dis-le d'office dès le premier message" "Ce n'est pas la gravité" "Enchaîner" "Ne demande pas « Voulez-vous continuer ? »" "Ne laisse jamais un message sans suite" "ne doit jamais avoir à te relancer" "role_non_designe" "Ne réessaie pas de valider" "raison_abandon" "etiquettes" "\`motif\`" "ne liste que ce qui attend encore" \
-  "Trancher ou commenter" "\`retenue\`" "\`proposee\`" "reponses_proposees" "reponses_defaites" "Votre réponse est retenue" "Votre réponse est proposée, en attente de" "Votre réponse est défaite" "Un commentaire n'est pas une réponse" "defaire_reponse" "defaire_refuse" "reponse_en_attente" "question_sans_reponse" "question_close" "repondre_question" "\`option_id\`" \
-  "\`idea\`" "En attente d'un bloc" "jamais les compléter" "ranger_demande" \
-  "Envoyer un fichier" "preparer_envoi" "lire_fichier" "\`pieces\`" "\`documents\`" "\`passees\`" "\`compte_rendu\`" "\`vagues\`" "mes_preferences" "\`notifications\`" "Les valeurs et leurs libellés sont dans la description" \
-  "curl -sS -o /dev/null -w '%{http_code}' -F 'fichier=@<chemin absolu>' '<adresse>'" "curl.exe -sS -o NUL -w '%{http_code}' -F 'fichier=@<chemin absolu>' '<adresse>'" "https://app.oovrage.fr/api/envois/<jeton>" "\`201\`" "jusqu'à 1 Go" "Au-delà d'1 Go" "N'utilise le shell que pour la commande d'envoi"; do
+  "mes_projets" "Ne demande jamais le nom court" \
+  "Envoyer un fichier" "preparer_envoi" "\`TAC-n\`" \
+  "spec_en_brouillon" "\`brouillon\`" "question_close" "\`statut: \"rendue\"\`" \
+  "curl -sS -o /dev/null -w '%{http_code}' -F 'fichier=@<chemin absolu>' '<adresse>'" "curl.exe -sS -o NUL -w '%{http_code}' -F 'fichier=@<chemin absolu>' '<adresse>'" "https://app.oovrage.fr/api/envois/<jeton>" "\`201\`" "jusqu'à 1 Go" "Au-delà d'1 Go" "N'utilise le shell que pour la commande d'envoi (point 7)"; do
   if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "skill mentionne $mot"; else ko "skill mentionne $mot"; fi
 done
+# Tutoiement : plus aucune phrase au « vous » dans le skill.
+for vieux in "Vouvoie" "Montrez-moi" "Tapez" "Cliquez"; do
+  if grep -qF -- "$vieux" "$S" 2>/dev/null; then ko "tutoiement : plus de $vieux"; else ok "tutoiement : plus de $vieux"; fi
+done
+if grep -qwi -- "vous" "$S" 2>/dev/null; then ko "tutoiement : plus de vous" "$(grep -nwi -- vous "$S")"; else ok "tutoiement : plus de vous"; fi
 for vieux in "plugin:oovrage-client:correspondant" "N'utilise jamais le shell" "cahiers_chez_le_testeur" "salon"; do
   if grep -qF -- "$vieux" "$S" "$RACINE/README.md" "$RACINE/SPEC.md" 2>/dev/null; then ko "plus de $vieux"; else ok "plus de $vieux"; fi
 done
 if grep -qF "le reste de la" "$S" 2>/dev/null; then ko "choix hors accueil" "« le reste de la conversation est en texte » contredit les boutons"; else ok "choix hors accueil"; fi
-for mot in "passent toujours par des boutons" "sans recopier la" "ToolSearch" "seulement en terminal"; do
+for mot in "passent toujours par des boutons" "sans recopier la" "ToolSearch" "seulement en terminal" "Clique pour confirmer"; do
   if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "choix en boutons : $mot"; else ko "choix en boutons : $mot"; fi
 done
 if grep -qF "https://app.oovrage.fr" "$S" 2>/dev/null; then ok "adresse par défaut"; else ko "adresse par défaut"; fi
 
+# La version écrite dans le skill est celle du plugin : la session la passe à chaque appel (`version_client`).
+V="$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' "$RACINE/.claude-plugin/plugin.json")"
+egal "version du skill = plugin.json" "Version du plugin : $V" "$(grep '^Version du plugin : ' "$S" 2>/dev/null)"
+for mot in "l'argument \`version_client\`" "\`mes_organisations\` et \`mes_projets\`" "avec le seul argument \`version_client\`" \
+  "Plugin à mettre à jour" "plugin_a_mettre_a_jour" "claude plugin update oovrage-client@oovrage-client" \
+  "clique sur « Run »" "tape \`!\` suivi de cette" "/reload-plugins" "Tape \`/plugin\`" \
+  "Ne lance jamais la commande toi-même" "Demande la nouvelle archive au builder du projet"; do
+  if grep -qF -- "$mot" "$S" 2>/dev/null; then ok "mise à jour : $mot"; else ko "mise à jour : $mot"; fi
+done
+
 R="$RACINE/README.md"
 ORG="$(git -C "$RACINE" remote get-url origin 2>/dev/null | sed -n 's#.*github\.com[:/]\([^/]*\)/.*#\1#p')"
-for mot in "/plugin marketplace add $ORG/oovrage-client" "/plugin install oovrage-client@oovrage-client" "/oovrage-client:correspondant" "/mcp" "Valider la spec sans répondre" "refuse d'y travailler"; do
+for mot in "/plugin marketplace add $ORG/oovrage-client" "/plugin install oovrage-client@oovrage-client" "/oovrage-client:correspondant" "/mcp" "Valider la spec sans répondre" "refuse d'y travailler" \
+  "## Mettre à jour" "claude plugin update oovrage-client@oovrage-client" "/reload-plugins" "Marketplace auto-update"; do
   if grep -qF -- "$mot" "$R" 2>/dev/null; then ok "README mentionne $mot"; else ko "README mentionne $mot"; fi
 done
 
